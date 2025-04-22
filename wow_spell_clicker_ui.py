@@ -381,6 +381,9 @@ class KeybinderUI:
         
         self.stop_button = ttk.Button(control_frame, text="Stop", command=self.stop_keybinder, state="disabled")
         self.stop_button.pack(side="left", padx=5, pady=5)
+
+        self.test_button = ttk.Button(control_frame, text="Test Detection", command=self.test_detection)
+        self.test_button.pack(side="left", padx=5, pady=5)
         
         # Status indicator
         self.status_var = tk.StringVar(value="Status: Stopped")
@@ -564,8 +567,8 @@ class KeybinderUI:
                             f"Would press: {spell_key}\n\n"
                             "Check debug tab for more details")
         else:
-            messagebox.showinf    
-
+            messagebox.showinfo("Detection Test", "No spell detected. Check debug tab for details.")
+    
         
     
     def hotkey_listener(self):
