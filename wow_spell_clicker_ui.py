@@ -116,7 +116,7 @@ class SpellKeybinder:
             return False
     
     def match_leftmost_icon(self):
-        """Identify which spell is shown in the leftmost icon position"""
+        """Identify which spell is shown in the leftmost icon position with improved debugging"""
         try:
             # Check if regions are defined
             if not self.leftmost_icon_region:
@@ -128,8 +128,19 @@ class SpellKeybinder:
             leftmost_np = np.array(leftmost_screenshot)
             leftmost_np = cv2.cvtColor(leftmost_np, cv2.COLOR_RGB2BGR)
             
+            # Save a debug image of what we're capturing
+            debug_dir = "debug_captures"
+            if not os.path.exists(debug_dir):
+                os.makedirs(debug_dir)
+            timestamp = time.strftime("%H%M%S", time.localtime())
+            cv2.imwrite(f"{debug_dir}/leftmost_capture_{timestamp}.png", leftmost_np)
+            
+            # Log the capture for debugging
+            self.add_debug(f"Captured leftmost icon region (saved to debug_captures folder)")
+            
             best_match_idx = None
             best_match_val = 0
+            match_vals = []  # Store all match values for debugging
             
             # Try to match against all spell templates
             for idx, template in enumerate(self.spell_templates):
@@ -138,6 +149,10 @@ class SpellKeybinder:
                     result = cv2.matchTemplate(leftmost_np, template, cv2.TM_CCOEFF_NORMED)
                     _, max_val, _, _ = cv2.minMaxLoc(result)
                     
+                    # Store the match value for debugging
+                    spell_name = self.spell_names[idx] if idx < len(self.spell_names) else f"Spell {idx+1}"
+                    match_vals.append((idx, spell_name, max_val))
+                    
                     # If this is the best match so far and above threshold
                     if max_val > best_match_val and max_val >= self.confidence_threshold:
                         best_match_idx = idx
@@ -145,11 +160,21 @@ class SpellKeybinder:
                 except Exception as e:
                     self.add_debug(f"Error matching template {idx+1}: {str(e)}")
             
+            # Sort matches by value for debugging
+            match_vals.sort(key=lambda x: x[2], reverse=True)
+            
+            # Log top 5 matches for debugging
+            self.add_debug("Top 5 template matches:")
+            for i, (idx, name, val) in enumerate(match_vals[:5]):
+                self.add_debug(f"  {i+1}. '{name}' (match: {val:.2f})")
+            
             # Log the detection if a match was found
             if best_match_idx is not None:
                 spell_name = self.spell_names[best_match_idx] if best_match_idx < len(self.spell_names) else f"Spell {best_match_idx+1}"
                 spell_key = self.spell_keys[best_match_idx] if best_match_idx < len(self.spell_keys) else "unknown"
-                self.add_debug(f"Detected '{spell_name}' in leftmost position (match: {best_match_val:.2f}), key: {spell_key}")
+                self.add_debug(f"SELECTED: '{spell_name}' in leftmost position (match: {best_match_val:.2f}), key: {spell_key}")
+            else:
+                self.add_debug("No match found above confidence threshold")
             
             return best_match_idx
             
@@ -523,6 +548,24 @@ class KeybinderUI:
         self.stop_button.config(state="disabled")
         self.status_var.set("Status: Stopped")
 
+    def test_detection(self):
+        """Test the spell detection without casting"""
+        # Update keybinder settings from UI
+        self.keybinder.confidence_threshold = self.confidence_var.get()
+        
+        # Only do detection, don't cast
+        leftmost_spell_idx = self.keybinder.match_leftmost_icon()
+        
+        if leftmost_spell_idx is not None:
+            spell_name = self.keybinder.spell_names[leftmost_spell_idx]
+            spell_key = self.keybinder.spell_keys[leftmost_spell_idx]
+            messagebox.showinfo("Detection Test", 
+                            f"Detected: {spell_name}\n"
+                            f"Would press: {spell_key}\n\n"
+                            "Check debug tab for more details")
+        else:
+            messagebox.showinf    
+
         
     
     def hotkey_listener(self):
@@ -557,34 +600,31 @@ class KeybinderUI:
                 
                 # F4 to set bottom-right corner of alert region
                 if keyboard.is_pressed('f4') and top_left_set:
-                    bottom_right_x, bottom_right_y = pyautogui.position()
-                    self.keybinder.add_debug(f"Set bottom-right corner at ({bottom_right_x}, {bottom_right_y})")
-                    
-                    # Set the alert region
-                    self.keybinder.alert_region = [top_left_x, top_left_y, bottom_right_x, bottom_right_y]
-                    
-                    # Calculate the leftmost icon region
-                    width = bottom_right_x - top_left_x
-                    # Calculate height (not used further)
-                    _ = bottom_right_y - top_left_y
-                    icon_width = width // 3
-                    self.keybinder.leftmost_icon_region = [
-                        top_left_x,           # x1
-                        top_left_y,           # y1
-                        top_left_x + icon_width,  # x2
-                        bottom_right_y        # y2
-                    ]
-                    
-                    # Update the display
-                    self.root.after(100, lambda: self.alert_region_var.set(
-                        f"({top_left_x}, {top_left_y}) to ({bottom_right_x}, {bottom_right_y})"))
-                    
-                    self.keybinder.add_debug(f"Alert region set to: {self.keybinder.alert_region}")
-                    self.keybinder.add_debug(f"Leftmost icon region set to: {self.keybinder.leftmost_icon_region}")
-                    
-                    # Reset for next time
-                    top_left_set = False
-                    time.sleep(0.3)  # Debounce
+                   bottom_right_x, bottom_right_y = pyautogui.position()
+                   self.keybinder.add_debug(f"Set bottom-right corner at ({bottom_right_x}, {bottom_right_y})")
+                   
+                   # Set the alert region
+                   self.keybinder.alert_region = [top_left_x, top_left_y, bottom_right_x, bottom_right_y]
+                   
+                   # Calculate the leftmost icon region - use a fixed 70 pixel width for icon
+                   icon_width = 70  # Fixed width based on your UI
+                   self.keybinder.leftmost_icon_region = [
+                       top_left_x,                # x1
+                       top_left_y,                # y1
+                       top_left_x + icon_width,   # x2
+                       bottom_right_y             # y2
+                   ]
+                   
+                   # Update the display
+                   self.root.after(100, lambda: self.alert_region_var.set(
+                       f"({top_left_x}, {top_left_y}) to ({bottom_right_x}, {bottom_right_y})"))
+                   
+                   self.keybinder.add_debug(f"Alert region set to: {self.keybinder.alert_region}")
+                   self.keybinder.add_debug(f"Leftmost icon region set to: {self.keybinder.leftmost_icon_region}")
+                   
+                   # Reset for next time
+                   top_left_set = False
+                   time.sleep(0.3)  # Debounce
                 
                 # Small delay to reduce CPU usage
                 time.sleep(0.05)
@@ -597,8 +637,9 @@ class KeybinderUI:
         messagebox.showinfo("Select Region", 
                            "1. Move mouse to TOP-LEFT corner of alert icons region and press F3\n"
                            "2. Move mouse to BOTTOM-RIGHT corner and press F4\n"
-                           "3. Press ESC if you want to cancel")
-    
+                           "3. Make sure you only select the actual proc area, not your regular action bars\n"
+                           "4. Press ESC if you want to cancel")
+        
     def add_spell(self):
         """Add a new spell to the list"""
         name = self.spell_name_var.get().strip()
