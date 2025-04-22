@@ -652,95 +652,128 @@ class KeybinderUI:
             messagebox.showerror("Error", f"Failed to update spell template: {str(e)}")
     
     def import_keybinds(self):
-        """Import your predefined keybinds"""
-        # Clear existing spells first
-        if messagebox.askyesno("Confirm Import", "This will clear existing spells and import your predefined keybinds. Continue?"):
-            # Clear existing data
-            self.keybinder.spell_templates = []
-            self.keybinder.spell_keys = []
-            self.keybinder.spell_names = []
+    """Import your predefined keybinds"""
+    # Clear existing spells first
+    if messagebox.askyesno("Confirm Import", "This will clear existing spells and import your predefined keybinds. Continue?"):
+        # Clear existing data
+        self.keybinder.spell_templates = []
+        self.keybinder.spell_keys = []
+        self.keybinder.spell_names = []
+        
+        # Define your keybinds
+        keybinds = [
+            ("Bloodlust", "numpad0"),
+            ("Earth Shield", "numpad1"),
+            ("Ascendance", "numpad2"),
+            ("Earth Elemental", "numpad3"),
+            ("Storm Elemental", "numpad4"),
+            ("Skyfury", "numpad5"),
+            ("Ancestral Swiftness", "numpad6"),
+            ("Astral Shift", "numpad7"),
+            ("Blood Fury", "numpad8"),
+            ("Wind Shear", "numpad9"),
+            ("Lightning Shield", "ctrl+1"),
+            ("Gust of Wind", "ctrl+3"),
+            ("Stone Bulwark Totem", "ctrl+4"),
+            ("Primal Strike", "1"),
+            ("Frost Shock", "2"),
+            ("Lightning Bolt", "3"),
+            ("Spiritwalker's Grace", "4"),
+            ("Chain Lightning", "5"),
+            ("Lava Burst", "6"),
+            ("Primordial Wave", "7"),
+            ("Earth Shock", "8"),
+            ("Stormkeeper", "9"),
+            ("Earthquake", "0"),
+            ("Healing Surge", "-"),
+            ("Flame Shock", "="),
+            ("Cleanse Spirit", "ctrl+5")
+        ]
+        
+        # Use simplified approach - just import the keybinds without capturing templates
+        for name, key in keybinds:
+            # Add the keybind info
+            self.keybinder.spell_names.append(name)
+            self.keybinder.spell_keys.append(key)
             
-            # Define your keybinds
-            keybinds = [
-                ("Bloodlust", "numpad0"),
-                ("Earth Shield", "numpad1"),
-                ("Ascendance", "numpad2"),
-                ("Earth Elemental", "numpad3"),
-                ("Storm Elemental", "numpad4"),
-                ("Skyfury", "numpad5"),
-                ("Ancestral Swiftness", "numpad6"),
-                ("Astral Shift", "numpad7"),
-                ("Blood Fury", "numpad8"),
-                ("Wind Shear", "numpad9"),
-                ("Lightning Shield", "ctrl+1"),
-                ("Gust of Wind", "ctrl+3"),
-                ("Stone Bulwark Totem", "ctrl+4"),
-                ("Primal Strike", "1"),
-                ("Frost Shock", "2"),
-                ("Lightning Bolt", "3"),
-                ("Spiritwalker's Grace", "4"),
-                ("Chain Lightning", "5"),
-                ("Lava Burst", "6"),
-                ("Primordial Wave", "7"),
-                ("Earth Shock", "8"),
-                ("Stormkeeper", "9"),
-                ("Earthquake", "0"),
-                ("Healing Surge", "-"),
-                ("Flame Shock", "="),
-                ("Cleanse Spirit", "ctrl+5")
-            ]
-            
-            # Take screenshots of each spell, guided by the user
-            messagebox.showinfo("Importing Keybinds", 
-                               "Next, you'll need to capture screenshots of each spell.\n\n"
-                               "For each spell:\n"
-                               "1. Hover your mouse over the spell in your spell bar\n"
-                               "2. Press F2 to capture its position\n"
-                               "3. The application will then capture that spell\n\n"
-                               "Press OK to start capturing spells.")
-            
-            for i, (name, key) in enumerate(keybinds):
-                # Tell the user which spell to hover over
-                messagebox.showinfo("Capture Spell", 
-                                   f"Please hover your mouse over '{name}' (key: {key}) and press F2.\n\n"
-                                   f"Spell {i+1} of {len(keybinds)}")
+            # Add dummy template
+            if len(self.keybinder.spell_templates) > 0:
+                # Use the first template as a placeholder
+                self.keybinder.spell_templates.append(self.keybinder.spell_templates[0].copy())
+            else:
+                # Create a dummy template of black pixels
+                dummy_template = np.zeros((40, 40, 3), dtype=np.uint8)
+                self.keybinder.spell_templates.append(dummy_template)
                 
-                # Wait for F2 press
-                self.waiting_for_capture = True
-                self.current_capture_name = name
-                self.current_capture_key = key
-                
-                # For a real implementation, we would need to wait for each spell to be captured
-            # Instead of automated capturing, let's do a simplified approach
-            for name, key in keybinds:
-                # Just add the keybind info without capturing templates
-                self.keybinder.spell_names.append(name)
-                self.keybinder.spell_keys.append(key)
-                
-                # Add dummy template (user will need to capture actual templates)
-                if len(self.keybinder.spell_templates) > 0:
-                    # Use the first template as a placeholder
-                    self.keybinder.spell_templates.append(self.keybinder.spell_templates[0].copy())
-                
-            # Update the spell list
-            self.update_spell_list()
+                # Save the dummy template
+                if not os.path.exists(self.keybinder.templates_dir):
+                    os.makedirs(self.keybinder.templates_dir)
+                cv2.imwrite(f"{self.keybinder.templates_dir}/spell_dummy.png", dummy_template)
+        
+        # Update the spell list
+        self.update_spell_list()
+        
+        messagebox.showinfo("Import Complete", 
+                           f"Successfully imported {len(keybinds)} keybinds!\n\n"
+                           "Important: You still need to capture the spell icons.\n"
+                           "For each spell in the list:\n"
+                           "1. Select the spell in the list\n"
+                           "2. Hover mouse over that spell in your action bar\n"
+                           "3. Press F2 to capture position\n"
+                           "4. Click 'Update Selected Spell'")
+        
+        # Add a button for updating selected spells
+        if not hasattr(self, 'update_spell_button'):
+            button_frame = self.spells_tab.winfo_children()[-1]  # Button frame
+            self.update_spell_button = ttk.Button(
+                button_frame,
+                text="Update Selected Spell",
+                command=self.update_selected_spell
+            )
+            self.update_spell_button.pack(side="left", padx=5)
+        
+        self.keybinder.add_debug(f"Imported {len(keybinds)} predefined keybinds")
+
+        def save_configuration(self):
+    """Save the current configuration"""
+    try:
+        # Update the keybinder with current UI values
+        self.keybinder.confidence_threshold = self.confidence_var.get()
+        self.keybinder.cast_cooldown = self.cooldown_var.get()
+        self.keybinder.repeat_cast = self.repeat_var.get()
+        
+        # Save the configuration
+        self.keybinder.save_config()
+        
+        messagebox.showinfo("Success", "Configuration saved successfully")
+        
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save configuration: {str(e)}")
+
+        def start_keybinder(self):
+    """Start the keybinder"""
+    # Update with current settings
+    self.keybinder.confidence_threshold = self.confidence_var.get()
+    self.keybinder.cast_cooldown = self.cooldown_var.get()
+    self.keybinder.repeat_cast = self.repeat_var.get()
+    
+    # Start the keybinder
+    if self.keybinder.start_casting():
+        # Update button states
+        self.start_button.config(state="disabled")
+        self.stop_button.config(state="normal")
+        self.status_var.set("Status: Running")
+    else:
+        messagebox.showerror("Error", "Failed to start - check if alert region and spells are configured")
+
+def stop_keybinder(self):
+    """Stop the keybinder"""
+    # Stop the keybinder
+    self.keybinder.stop_casting()
+    
+    # Update button states
+    self.start_button.config(state="normal")
+    self.stop_button.config(state="disabled")
+    self.status_var.set("Status: Stopped")
+
             
-            messagebox.showinfo("Import Complete", 
-                               f"Successfully imported {len(keybinds)} keybinds!\n\n"
-                               "Important: You still need to capture the spell icons.\n"
-                               "For each spell in the list:\n"
-                               "1. Select the spell in the list\n"
-                               "2. Hover mouse over that spell in your action bar\n"
-                               "3. Press F2 to capture position\n"
-                               "4. Click 'Update Selected Spell'")
-            
-            # Add a button for updating selected spells
-            if not hasattr(self, 'update_spell_button'):
-                self.update_spell_button = ttk.Button(
-                    self.spells_tab.winfo_children()[2].winfo_children()[-1],  # Button frame
-                    text="Update Selected Spell",
-                    command=self.update_selected_spell
-                )
-                self.update_spell_button.pack(side="left", padx=5)
-            
-            self.keybinder.add_debug(f"Imported {len(keybinds)} predefined keybinds")"
