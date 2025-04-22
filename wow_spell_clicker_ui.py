@@ -459,6 +459,71 @@ class KeybinderUI:
         self.hotkey_thread = threading.Thread(target=self.hotkey_listener)
         self.hotkey_thread.daemon = True
         self.hotkey_thread.start()
+
+    def save_configuration(self):
+        """Save the current configuration"""
+        try:
+            # Update the keybinder settings from UI
+            self.keybinder.confidence_threshold = self.confidence_var.get()
+            self.keybinder.cast_cooldown = self.cooldown_var.get()
+            self.keybinder.repeat_cast = self.repeat_var.get()
+            
+            # Save the configuration
+            self.keybinder.save_config()
+            
+            # Show confirmation
+            messagebox.showinfo("Success", "Configuration saved successfully")
+        
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save configuration: {str(e)}")
+
+    def load_configuration(self):
+        """Load the configuration from file"""
+        if self.keybinder.load_config():
+            # Update UI from keybinder settings
+            self.confidence_var.set(self.keybinder.confidence_threshold)
+            self.cooldown_var.set(self.keybinder.cast_cooldown)
+            self.repeat_var.set(self.keybinder.repeat_cast)
+            
+            # Update alert region display
+            if self.keybinder.alert_region:
+                x1, y1, x2, y2 = self.keybinder.alert_region
+                self.alert_region_var.set(f"({x1}, {y1}) to ({x2}, {y2})")
+            
+            # Load spell templates
+            if self.keybinder.load_templates():
+                # Update the spell list
+                self.update_spell_list()
+            
+            return True
+        return False
+
+    def start_keybinder(self):
+        """Start the spell casting"""
+        # Update keybinder settings from UI
+        self.keybinder.confidence_threshold = self.confidence_var.get()
+        self.keybinder.cast_cooldown = self.cooldown_var.get()
+        self.keybinder.repeat_cast = self.repeat_var.get()
+        
+        # Try to start the keybinder
+        if self.keybinder.start_casting():
+            # Update the UI
+            self.start_button.config(state="disabled")
+            self.stop_button.config(state="normal")
+            self.status_var.set("Status: Running")
+        else:
+            messagebox.showerror("Error", "Failed to start the spell caster. Check the debug log for details.")
+    
+    def stop_keybinder(self):
+        """Stop the spell casting"""
+        self.keybinder.stop_casting()
+        
+        # Update the UI
+        self.start_button.config(state="normal")
+        self.stop_button.config(state="disabled")
+        self.status_var.set("Status: Stopped")
+
+        
     
     def hotkey_listener(self):
         """Listen for global hotkeys"""
@@ -651,3 +716,18 @@ class KeybinderUI:
             
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update spell template: {str(e)}")
+
+
+if __name__ == "__main__":
+    try:
+        # Create the main window
+        root = tk.Tk()
+        app = KeybinderUI(root)
+        
+        # Start the main loop
+        root.mainloop()
+    except Exception as e:
+        print(f"Error starting application: {e}")
+        # In case of error, wait before closing
+        import time
+        time.sleep(5)            
