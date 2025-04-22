@@ -1,0 +1,16 @@
+
+{
+  "scan_area": [100, 100, 300, 100],
+  "detection_frequency": 0.1,
+  "confidence_threshold": 0.8,
+  "cooldown": 0.5,
+  "autostart": false,
+  "minimize_to_tray": true,
+  "game_type": "World of Warcraft",
+  "game_resolution": "1920x1080",
+  "keybinds": {
+    "N5": "1",
+    "C1": "2",
+    "N1": "3"
+  }
+}

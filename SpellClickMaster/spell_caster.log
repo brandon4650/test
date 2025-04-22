@@ -1,0 +1,378 @@
+2025-04-22 15:46:33,576 - utils.config_manager - INFO - Configuration file not found at F:\SpellClickMaster\spell_caster_config.json, using defaults
+2025-04-22 15:46:33,577 - utils.config_manager - INFO - Configuration file not found at F:\SpellClickMaster\spell_caster_config.json, using defaults
+2025-04-22 15:46:33,578 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:46:33,579 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:46:33,579 - spell_detector - INFO - Added preset spell templates for first-time use
+2025-04-22 15:46:33,599 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:46:33,599 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:46:33,605 - spell_detector - INFO - Configuration updated
+2025-04-22 15:46:33,606 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:46:33,607 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:46:33,608 - spell_detector - INFO - Configuration updated
+2025-04-22 15:46:33,609 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:46:33,609 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:46:33,610 - spell_detector - INFO - Configuration updated
+2025-04-22 15:48:34,935 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:48:34,945 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:48:34,946 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:48:34,947 - spell_detector - INFO - Configuration updated
+2025-04-22 15:48:34,948 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:48:34,948 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:48:34,949 - spell_detector - INFO - Configuration updated
+2025-04-22 15:48:34,950 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 15:48:34,950 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 15:48:34,951 - spell_detector - INFO - Configuration updated
+2025-04-22 15:53:58,746 - screen_capture - ERROR - Failed to capture screen: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.
+Traceback (most recent call last):
+  File "F:\SpellClickMaster\screen_capture.py", line 23, in capture_full_screen
+    screenshot = pyautogui.screenshot()
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\pyautogui\__init__.py", line 228, in _couldNotImportPyScreeze
+    raise PyAutoGUIException(
+        "PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."
+    )
+pyautogui.PyAutoGUIException: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.
+2025-04-22 16:04:24,181 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:04:24,191 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:04:24,192 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:04:24,193 - spell_detector - INFO - Configuration updated
+2025-04-22 16:04:24,193 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:04:24,194 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:04:24,195 - spell_detector - INFO - Configuration updated
+2025-04-22 16:04:24,195 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:04:24,196 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:04:24,197 - spell_detector - INFO - Configuration updated
+2025-04-22 16:04:30,454 - spell_detector - ERROR - Scan area not configured
+2025-04-22 16:04:31,397 - spell_detector - ERROR - Scan area not configured
+2025-04-22 16:04:38,948 - screen_capture - ERROR - Failed to capture screen: module 'ctypes.wintypes' has no attribute 'BITMAPINFO'
+Traceback (most recent call last):
+  File "F:\SpellClickMaster\screen_capture.py", line 42, in capture_full_screen
+    bmpInfo = wintypes.BITMAPINFO()
+              ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'ctypes.wintypes' has no attribute 'BITMAPINFO'
+2025-04-22 16:06:41,180 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:06:41,191 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:06:41,191 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:06:41,192 - spell_detector - INFO - Configuration updated
+2025-04-22 16:06:41,193 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:06:41,193 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:06:41,194 - spell_detector - INFO - Configuration updated
+2025-04-22 16:06:41,195 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:06:41,196 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:06:41,196 - spell_detector - INFO - Configuration updated
+2025-04-22 16:13:26,999 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:13:26,999 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:16:50,387 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:16:50,387 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:20:41,763 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:20:41,763 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:20:46,192 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:20:46,193 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:20:53,662 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:20:55,911 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:20:55,911 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:20:58,915 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:20:58,915 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:21:01,354 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:21:02,829 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:21:02,829 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:21:04,304 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:21:04,305 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:21:06,586 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:21:06,587 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:23:47,519 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:23:51,308 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:23:51,308 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:18,575 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:18,576 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:24,823 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:24,824 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:24,834 - spell_detector - INFO - Configuration updated
+2025-04-22 16:31:40,826 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:40,827 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:40,834 - spell_detector - INFO - Configuration updated
+2025-04-22 16:31:41,632 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:41,633 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:41,640 - spell_detector - INFO - Configuration updated
+2025-04-22 16:31:42,146 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:42,147 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:42,154 - spell_detector - INFO - Configuration updated
+2025-04-22 16:31:43,521 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:43,522 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:43,528 - spell_detector - INFO - Configuration updated
+2025-04-22 16:31:43,898 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:31:43,898 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:31:43,905 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:15,246 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:15,255 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:15,256 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:15,257 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:15,258 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:15,258 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:15,259 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:15,260 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:15,260 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:15,261 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:15,262 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:15,262 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:15,263 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:16,264 - spell_detector - INFO - Detection process started
+2025-04-22 16:52:19,106 - spell_detector - INFO - Detection process stopped
+2025-04-22 16:52:26,639 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:26,640 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:35,198 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:35,208 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:35,209 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:35,210 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:35,211 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:35,211 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:35,212 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:35,213 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:35,214 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:35,215 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:35,216 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:35,216 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:52:35,217 - spell_detector - INFO - Configuration updated
+2025-04-22 16:52:36,218 - spell_detector - INFO - Detection process started
+2025-04-22 16:52:39,159 - spell_detector - INFO - Detection process stopped
+2025-04-22 16:52:40,019 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:52:40,019 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:53:03,005 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:53:03,005 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:53:30,424 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:53:30,425 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:53:34,766 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:53:34,767 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:53:34,772 - spell_detector - INFO - Configuration updated
+2025-04-22 16:55:28,932 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:55:28,942 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:55:28,942 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:55:28,943 - spell_detector - INFO - Configuration updated
+2025-04-22 16:55:28,944 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:55:28,945 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:55:28,946 - spell_detector - INFO - Configuration updated
+2025-04-22 16:55:28,947 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:55:28,947 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:55:28,948 - spell_detector - INFO - Configuration updated
+2025-04-22 16:55:28,949 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:55:28,949 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:55:28,950 - spell_detector - INFO - Configuration updated
+2025-04-22 16:57:18,965 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:57:18,975 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:57:18,975 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:57:18,977 - spell_detector - INFO - Configuration updated
+2025-04-22 16:57:18,977 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:57:18,978 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:57:18,979 - spell_detector - INFO - Configuration updated
+2025-04-22 16:57:18,980 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:57:18,980 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:57:18,981 - spell_detector - INFO - Configuration updated
+2025-04-22 16:57:18,982 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 16:57:18,982 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 16:57:18,983 - spell_detector - INFO - Configuration updated
+2025-04-22 17:10:05,577 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:10:05,587 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:10:05,588 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:10:05,589 - spell_detector - INFO - Configuration updated
+2025-04-22 17:10:05,590 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:10:05,590 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:10:05,591 - spell_detector - INFO - Configuration updated
+2025-04-22 17:10:05,591 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:10:05,592 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:10:05,593 - spell_detector - INFO - Configuration updated
+2025-04-22 17:10:05,593 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:10:05,594 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:10:05,595 - spell_detector - INFO - Configuration updated
+2025-04-22 17:17:08,932 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:17:08,933 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:17:08,948 - spell_detector - INFO - Configuration updated
+2025-04-22 17:21:42,844 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 17:21:42,845 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 17:21:42,849 - spell_detector - INFO - Configuration updated
+2025-04-22 18:10:51,699 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:10:51,709 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:10:51,710 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:10:51,717 - spell_detector - INFO - Configuration updated
+2025-04-22 18:10:51,718 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:10:51,718 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:10:51,719 - spell_detector - INFO - Configuration updated
+2025-04-22 18:10:51,720 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:10:51,720 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:10:51,721 - spell_detector - INFO - Configuration updated
+2025-04-22 18:10:51,722 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:10:51,723 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:10:51,724 - spell_detector - INFO - Configuration updated
+2025-04-22 18:13:09,430 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:13:09,441 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:13:09,442 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:13:09,443 - spell_detector - INFO - Configuration updated
+2025-04-22 18:13:09,444 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:13:09,444 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:13:09,445 - spell_detector - INFO - Configuration updated
+2025-04-22 18:13:09,446 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:13:09,446 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:13:09,447 - spell_detector - INFO - Configuration updated
+2025-04-22 18:13:09,448 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:13:09,448 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:13:09,449 - spell_detector - INFO - Configuration updated
+2025-04-22 18:13:26,612 - ui.configuration_dialog - INFO - Updated keybind for sinister stike: 
+2025-04-22 18:13:26,724 - ui.configuration_dialog - INFO - Updated keybind for sinister stike: 2
+2025-04-22 18:34:08,576 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:34:08,586 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:34:08,587 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:34:08,588 - spell_detector - INFO - Configuration updated
+2025-04-22 18:34:08,589 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:34:08,589 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:34:08,590 - spell_detector - INFO - Configuration updated
+2025-04-22 18:34:08,590 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:34:08,591 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:34:08,592 - spell_detector - INFO - Configuration updated
+2025-04-22 18:34:08,592 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:34:08,593 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:34:08,593 - spell_detector - INFO - Configuration updated
+2025-04-22 18:35:58,421 - ui.configuration_dialog - INFO - Renamed spell from '7' to 'blind'
+2025-04-22 18:43:46,350 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:43:46,350 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:43:46,365 - spell_detector - INFO - Configuration updated
+2025-04-22 18:43:51,905 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:43:51,906 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:43:51,911 - spell_detector - INFO - Configuration updated
+2025-04-22 18:43:55,104 - spell_detector - INFO - Detection process started
+2025-04-22 18:44:09,530 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:44:35,388 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:44:35,389 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:44:58,637 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:44:58,637 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:08,065 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:08,066 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:09,847 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:09,848 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:09,854 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:11,121 - spell_detector - INFO - Detection process started
+2025-04-22 18:45:36,974 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:36,974 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:36,983 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:36,985 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:36,985 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:36,993 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:36,995 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:36,995 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,001 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,003 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,003 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,010 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,011 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,011 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,017 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,019 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,019 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,025 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,026 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,026 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,031 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,033 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,034 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,041 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,042 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,043 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,048 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,050 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,050 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,057 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,059 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,059 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,065 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,067 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,067 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,073 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,077 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,077 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,082 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,094 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,094 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,101 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,135 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,135 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,142 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:37,155 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:37,155 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:37,162 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:40,171 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:45:40,796 - spell_detector - INFO - Detection process started
+2025-04-22 18:45:47,378 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,378 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,391 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,406 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,406 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,414 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,452 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,452 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,460 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,462 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,464 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,465 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,469 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,469 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,470 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,477 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,477 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,478 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,482 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,482 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,484 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,522 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,523 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,532 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,558 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,558 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,566 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,605 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,605 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,613 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,685 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,685 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,694 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:47,856 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:45:47,856 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:45:47,864 - spell_detector - INFO - Configuration updated
+2025-04-22 18:45:49,411 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:45:50,642 - spell_detector - INFO - Detection process started
+2025-04-22 18:46:23,042 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:47:01,051 - spell_detector - INFO - Detection process started
+2025-04-22 18:47:08,249 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:48:27,398 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:07,522 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:54:07,539 - spell_detector - INFO - Configuration updated
+2025-04-22 18:54:23,769 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:23,780 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:23,781 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:54:23,788 - spell_detector - INFO - Configuration updated
+2025-04-22 18:54:23,790 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:23,790 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:54:23,791 - spell_detector - INFO - Configuration updated
+2025-04-22 18:54:23,792 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:23,793 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:54:23,794 - spell_detector - INFO - Configuration updated
+2025-04-22 18:54:23,795 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:54:23,795 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:54:23,796 - spell_detector - INFO - Configuration updated
+2025-04-22 18:54:33,183 - spell_detector - INFO - Detection loop started
+2025-04-22 18:54:33,183 - spell_detector - INFO - Detection process started
+2025-04-22 18:54:40,767 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:54:41,779 - spell_detector - INFO - Detection loop started
+2025-04-22 18:54:41,779 - spell_detector - INFO - Detection process started
+2025-04-22 18:56:27,688 - spell_detector - INFO - Detection process stopped
+2025-04-22 18:56:31,481 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:56:31,493 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:56:31,493 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:56:31,495 - spell_detector - INFO - Configuration updated
+2025-04-22 18:56:31,496 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:56:31,496 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:56:31,497 - spell_detector - INFO - Configuration updated
+2025-04-22 18:56:31,499 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:56:31,499 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:56:31,500 - spell_detector - INFO - Configuration updated
+2025-04-22 18:56:31,501 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-22 18:56:31,502 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-22 18:56:31,502 - spell_detector - INFO - Configuration updated
+2025-04-22 18:56:36,280 - spell_detector - INFO - Detection loop started
+2025-04-22 18:56:36,281 - spell_detector - INFO - Detection process started
