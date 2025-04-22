@@ -626,4 +626,28 @@ class KeybinderUI:
             
             # Get the position
             pos_text = pos_text.strip("()")
-            x, y = map(int
+            x, y = map(int, pos_text.split(","))
+            
+            # Capture a template at that position
+            template = ImageGrab.grab(bbox=(x-20, y-20, x+20, y+20))
+            template_np = np.array(template)
+            template_np = cv2.cvtColor(template_np, cv2.COLOR_RGB2BGR)
+            
+            # Update the template
+            if idx < len(self.keybinder.spell_templates):
+                self.keybinder.spell_templates[idx] = template_np
+                
+                # Save it to disk
+                cv2.imwrite(f"{self.keybinder.templates_dir}/spell_{idx+1}.png", template_np)
+                
+                name = self.keybinder.spell_names[idx]
+                key = self.keybinder.spell_keys[idx]
+                self.keybinder.add_debug(f"Updated template for '{name}' (key: {key}) at position ({x}, {y})")
+                
+                # Reset the cursor position
+                self.cursor_pos_var.set("Hover over spell and press F2")
+                
+                messagebox.showinfo("Success", f"Updated template for '{name}'")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update spell template: {str(e)}")
