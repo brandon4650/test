@@ -91,7 +91,7 @@ class SpellKeybinder:
         """Capture a spell template at the given position"""
         try:
             # Capture a small region around the position
-            template = ImageGrab.grab(bbox=(x-20, y-20, x+20, y+20))
+            template = ImageGrab.grab(bbox=(x-30, y-30, x+30, y+30))
             template_np = np.array(template)
             template_np = cv2.cvtColor(template_np, cv2.COLOR_RGB2BGR)
             
@@ -694,7 +694,7 @@ class KeybinderUI:
             x, y = map(int, pos_text.split(","))
             
             # Capture a template at that position
-            template = ImageGrab.grab(bbox=(x-20, y-20, x+20, y+20))
+            template = ImageGrab.grab(bbox=(x-30, y-30, x+30, y+30))
             template_np = np.array(template)
             template_np = cv2.cvtColor(template_np, cv2.COLOR_RGB2BGR)
             
@@ -717,6 +717,89 @@ class KeybinderUI:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update spell template: {str(e)}")
 
+
+    def import_keybinds(self):
+        """Import your predefined keybinds"""
+        if messagebox.askyesno("Confirm Import", "This will clear existing spells and import your predefined keybinds. Continue?"):
+            # Clear existing data
+            self.keybinder.spell_templates = []
+            self.keybinder.spell_keys = []
+            self.keybinder.spell_names = []
+        
+            # Define your keybinds
+            keybinds = [
+                ("Bloodlust", "numpad0"),
+                ("Earth Shield", "numpad1"),
+                ("Ascendance", "numpad2"),
+                ("Earth Elemental", "numpad3"),
+                ("Storm Elemental", "numpad4"),
+                ("Skyfury", "numpad5"),
+                ("Ancestral Swiftness", "numpad6"),
+                ("Astral Shift", "numpad7"),
+                ("Blood Fury", "numpad8"),
+                ("Wind Shear", "numpad9"),
+                ("Lightning Shield", "ctrl+1"),
+                ("Gust of Wind", "ctrl+3"),
+                ("Stone Bulwark Totem", "ctrl+4"),
+                ("Primal Strike", "1"),
+                ("Frost Shock", "2"),
+                ("Lightning Bolt", "3"),
+                ("Spiritwalker's Grace", "4"),
+                ("Chain Lightning", "5"),
+                ("Lava Burst", "6"),
+                ("Primordial Wave", "7"),
+                ("Earth Shock", "8"),
+                ("Stormkeeper", "9"),
+                ("Earthquake", "0"),
+                ("Healing Surge", "-"),
+                ("Flame Shock", "="),
+                ("Cleanse Spirit", "ctrl+5")
+            ]
+        
+            # Use simplified approach - just import the keybinds without capturing templates
+            for name, key in keybinds:
+                # Add the keybind info
+                self.keybinder.spell_names.append(name)
+                self.keybinder.spell_keys.append(key)
+            
+                # Add dummy template
+                if len(self.keybinder.spell_templates) > 0:
+                    # Use the first template as a placeholder
+                    self.keybinder.spell_templates.append(self.keybinder.spell_templates[0].copy())
+                else:
+                    # Create a dummy template of black pixels
+                    dummy_template = np.zeros((40, 40, 3), dtype=np.uint8)
+                    self.keybinder.spell_templates.append(dummy_template)
+                
+                    # Save the dummy template
+                    if not os.path.exists(self.keybinder.templates_dir):
+                        os.makedirs(self.keybinder.templates_dir)
+                    cv2.imwrite(f"{self.keybinder.templates_dir}/spell_dummy.png", dummy_template)
+        
+            # Update the spell list
+            self.update_spell_list()
+        
+            messagebox.showinfo("Import Complete", 
+                           f"Successfully imported {len(keybinds)} keybinds!\n\n"
+                           "Important: You still need to capture the spell icons.\n"
+                           "For each spell in the list:\n"
+                           "1. Select the spell in the list\n"
+                           "2. Hover mouse over that spell in your action bar\n"
+                           "3. Press F2 to capture position\n"
+                           "4. Click 'Update Selected Spell'")
+        
+            # Add a button for updating selected spells
+            if not hasattr(self, 'update_spell_button'):
+                button_frame = self.spells_tab.winfo_children()[-1]  # Button frame
+                self.update_spell_button = ttk.Button(
+                    button_frame,
+                    text="Update Selected Spell",
+                    command=self.update_selected_spell
+                )
+                self.update_spell_button.pack(side="left", padx=5)
+        
+            self.keybinder.add_debug(f"Imported {len(keybinds)} predefined keybinds")
+    
 
 if __name__ == "__main__":
     try:
