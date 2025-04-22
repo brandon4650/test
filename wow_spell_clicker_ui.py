@@ -7,7 +7,7 @@ import json
 import cv2
 import numpy as np
 import pyautogui
-from PIL import ImageGrab, Image, ImageTk
+from PIL import ImageGrab
 import keyboard
 
 class SpellKeybinder:
@@ -136,7 +136,7 @@ class SpellKeybinder:
                 try:
                     # Use template matching
                     result = cv2.matchTemplate(leftmost_np, template, cv2.TM_CCOEFF_NORMED)
-                    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+                    _, max_val, _, _ = cv2.minMaxLoc(result)
                     
                     # If this is the best match so far and above threshold
                     if max_val > best_match_val and max_val >= self.confidence_threshold:
@@ -500,7 +500,8 @@ class KeybinderUI:
                     
                     # Calculate the leftmost icon region
                     width = bottom_right_x - top_left_x
-                    height = bottom_right_y - top_left_y
+                    # Calculate height (not used further)
+                    _ = bottom_right_y - top_left_y
                     icon_width = width // 3
                     self.keybinder.leftmost_icon_region = [
                         top_left_x,           # x1
@@ -652,68 +653,71 @@ class KeybinderUI:
             messagebox.showerror("Error", f"Failed to update spell template: {str(e)}")
     
     def import_keybinds(self):
+        """Import your predefined keybinds"""
     """Import your predefined keybinds"""
     # Clear existing spells first
-    if messagebox.askyesno("Confirm Import", "This will clear existing spells and import your predefined keybinds. Continue?"):
-        # Clear existing data
-        self.keybinder.spell_templates = []
-        self.keybinder.spell_keys = []
-        self.keybinder.spell_names = []
+    def import_keybinds(self):
+        """Import your predefined keybinds"""
+        if messagebox.askyesno("Confirm Import", "This will clear existing spells and import your predefined keybinds. Continue?"):
+            # Clear existing data
+            self.keybinder.spell_templates = []
+            self.keybinder.spell_keys = []
+            self.keybinder.spell_names = []
         
-        # Define your keybinds
-        keybinds = [
-            ("Bloodlust", "numpad0"),
-            ("Earth Shield", "numpad1"),
-            ("Ascendance", "numpad2"),
-            ("Earth Elemental", "numpad3"),
-            ("Storm Elemental", "numpad4"),
-            ("Skyfury", "numpad5"),
-            ("Ancestral Swiftness", "numpad6"),
-            ("Astral Shift", "numpad7"),
-            ("Blood Fury", "numpad8"),
-            ("Wind Shear", "numpad9"),
-            ("Lightning Shield", "ctrl+1"),
-            ("Gust of Wind", "ctrl+3"),
-            ("Stone Bulwark Totem", "ctrl+4"),
-            ("Primal Strike", "1"),
-            ("Frost Shock", "2"),
-            ("Lightning Bolt", "3"),
-            ("Spiritwalker's Grace", "4"),
-            ("Chain Lightning", "5"),
-            ("Lava Burst", "6"),
-            ("Primordial Wave", "7"),
-            ("Earth Shock", "8"),
-            ("Stormkeeper", "9"),
-            ("Earthquake", "0"),
-            ("Healing Surge", "-"),
-            ("Flame Shock", "="),
-            ("Cleanse Spirit", "ctrl+5")
-        ]
+            # Define your keybinds
+            keybinds = [
+                ("Bloodlust", "numpad0"),
+                ("Earth Shield", "numpad1"),
+                ("Ascendance", "numpad2"),
+                ("Earth Elemental", "numpad3"),
+                ("Storm Elemental", "numpad4"),
+                ("Skyfury", "numpad5"),
+                ("Ancestral Swiftness", "numpad6"),
+                ("Astral Shift", "numpad7"),
+                ("Blood Fury", "numpad8"),
+                ("Wind Shear", "numpad9"),
+                ("Lightning Shield", "ctrl+1"),
+                ("Gust of Wind", "ctrl+3"),
+                ("Stone Bulwark Totem", "ctrl+4"),
+                ("Primal Strike", "1"),
+                ("Frost Shock", "2"),
+                ("Lightning Bolt", "3"),
+                ("Spiritwalker's Grace", "4"),
+                ("Chain Lightning", "5"),
+                ("Lava Burst", "6"),
+                ("Primordial Wave", "7"),
+                ("Earth Shock", "8"),
+                ("Stormkeeper", "9"),
+                ("Earthquake", "0"),
+                ("Healing Surge", "-"),
+                ("Flame Shock", "="),
+                ("Cleanse Spirit", "ctrl+5")
+            ]
         
-        # Use simplified approach - just import the keybinds without capturing templates
-        for name, key in keybinds:
-            # Add the keybind info
-            self.keybinder.spell_names.append(name)
-            self.keybinder.spell_keys.append(key)
+            # Use simplified approach - just import the keybinds without capturing templates
+            for name, key in keybinds:
+                # Add the keybind info
+                self.keybinder.spell_names.append(name)
+                self.keybinder.spell_keys.append(key)
             
-            # Add dummy template
-            if len(self.keybinder.spell_templates) > 0:
-                # Use the first template as a placeholder
-                self.keybinder.spell_templates.append(self.keybinder.spell_templates[0].copy())
-            else:
-                # Create a dummy template of black pixels
-                dummy_template = np.zeros((40, 40, 3), dtype=np.uint8)
-                self.keybinder.spell_templates.append(dummy_template)
+                # Add dummy template
+                if len(self.keybinder.spell_templates) > 0:
+                    # Use the first template as a placeholder
+                    self.keybinder.spell_templates.append(self.keybinder.spell_templates[0].copy())
+                else:
+                    # Create a dummy template of black pixels
+                    dummy_template = np.zeros((40, 40, 3), dtype=np.uint8)
+                    self.keybinder.spell_templates.append(dummy_template)
                 
-                # Save the dummy template
-                if not os.path.exists(self.keybinder.templates_dir):
-                    os.makedirs(self.keybinder.templates_dir)
-                cv2.imwrite(f"{self.keybinder.templates_dir}/spell_dummy.png", dummy_template)
+                    # Save the dummy template
+                    if not os.path.exists(self.keybinder.templates_dir):
+                        os.makedirs(self.keybinder.templates_dir)
+                    cv2.imwrite(f"{self.keybinder.templates_dir}/spell_dummy.png", dummy_template)
         
-        # Update the spell list
-        self.update_spell_list()
+            # Update the spell list
+            self.update_spell_list()
         
-        messagebox.showinfo("Import Complete", 
+            messagebox.showinfo("Import Complete", 
                            f"Successfully imported {len(keybinds)} keybinds!\n\n"
                            "Important: You still need to capture the spell icons.\n"
                            "For each spell in the list:\n"
@@ -722,58 +726,35 @@ class KeybinderUI:
                            "3. Press F2 to capture position\n"
                            "4. Click 'Update Selected Spell'")
         
-        # Add a button for updating selected spells
-        if not hasattr(self, 'update_spell_button'):
-            button_frame = self.spells_tab.winfo_children()[-1]  # Button frame
-            self.update_spell_button = ttk.Button(
-                button_frame,
-                text="Update Selected Spell",
-                command=self.update_selected_spell
-            )
-            self.update_spell_button.pack(side="left", padx=5)
+            # Add a button for updating selected spells
+            if not hasattr(self, 'update_spell_button'):
+                button_frame = self.spells_tab.winfo_children()[-1]  # Button frame
+                self.update_spell_button = ttk.Button(
+                    button_frame,
+                    text="Update Selected Spell",
+                    command=self.update_selected_spell
+                )
+                self.update_spell_button.pack(side="left", padx=5)
         
-        self.keybinder.add_debug(f"Imported {len(keybinds)} predefined keybinds")
+            self.keybinder.add_debug(f"Imported {len(keybinds)} predefined keybinds")
+# Ensure only one KeybinderUI class is defined in the code.
+# Remove any duplicate or conflicting definitions of KeybinderUI.
 
-        def save_configuration(self):
-    """Save the current configuration"""
+# Removed redundant standalone functions `start_keybinder`, `stop_keybinder`, and `load_configuration`.
+# These functions are already part of the `KeybinderUI` class and should not exist outside of it.
+
+
+if __name__ == "__main__":
     try:
-        # Update the keybinder with current UI values
-        self.keybinder.confidence_threshold = self.confidence_var.get()
-        self.keybinder.cast_cooldown = self.cooldown_var.get()
-        self.keybinder.repeat_cast = self.repeat_var.get()
+        # Create the main window
+        root = tk.Tk()
+        app = KeybinderUI(root)
         
-        # Save the configuration
-        self.keybinder.save_config()
-        
-        messagebox.showinfo("Success", "Configuration saved successfully")
-        
+        # Start the main loop
+        root.mainloop()
     except Exception as e:
-        messagebox.showerror("Error", f"Failed to save configuration: {str(e)}")
-
-        def start_keybinder(self):
-    """Start the keybinder"""
-    # Update with current settings
-    self.keybinder.confidence_threshold = self.confidence_var.get()
-    self.keybinder.cast_cooldown = self.cooldown_var.get()
-    self.keybinder.repeat_cast = self.repeat_var.get()
-    
-    # Start the keybinder
-    if self.keybinder.start_casting():
-        # Update button states
-        self.start_button.config(state="disabled")
-        self.stop_button.config(state="normal")
-        self.status_var.set("Status: Running")
-    else:
-        messagebox.showerror("Error", "Failed to start - check if alert region and spells are configured")
-
-def stop_keybinder(self):
-    """Stop the keybinder"""
-    # Stop the keybinder
-    self.keybinder.stop_casting()
-    
-    # Update button states
-    self.start_button.config(state="normal")
-    self.stop_button.config(state="disabled")
-    self.status_var.set("Status: Stopped")
-
+        print(f"Error starting application: {e}")
+        # In case of error, wait before closing
+        import time
+        time.sleep(5)
             
