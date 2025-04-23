@@ -119,6 +119,52 @@ class ConfigManager:
         except Exception as e:
             logger.error(f"Error saving configuration: {str(e)}", exc_info=True)
             return False
+
+    def get_current_class_config(self):
+        """Get the configuration for the current expansion and class"""
+        config = self.load_config()
+        
+        # Check if using the new expansion-based structure
+        if 'expansions' in config:
+            current_exp = config.get('current_expansion')
+            current_class = config.get('current_class')
+            
+            if current_exp and current_class:
+                # Get class-specific config
+                return config.get('expansions', {}).get(current_exp, {}).get('classes', {}).get(current_class, {})
+        
+        # Fall back to legacy structure
+        return config
+    
+    def save_class_config(self, class_config):
+        """Save configuration for the current expansion and class"""
+        config = self.load_config()
+        
+        # Check if using the new expansion-based structure
+        if 'expansions' in config:
+            current_exp = config.get('current_expansion')
+            current_class = config.get('current_class')
+            
+            if current_exp and current_class:
+                # Ensure structure exists
+                if 'expansions' not in config:
+                    config['expansions'] = {}
+                if current_exp not in config['expansions']:
+                    config['expansions'][current_exp] = {'name': '', 'classes': {}}
+                if 'classes' not in config['expansions'][current_exp]:
+                    config['expansions'][current_exp]['classes'] = {}
+                    
+                # Update class config
+                config['expansions'][current_exp]['classes'][current_class] = class_config
+                
+                # Save full config
+                return self.save_config(config)
+        
+        # Fall back to saving directly to root config
+        for key, value in class_config.items():
+            config[key] = value
+        
+        return self.save_config(config)    
     
     def _save_templates(self):
         """Save icon templates to a separate binary file"""

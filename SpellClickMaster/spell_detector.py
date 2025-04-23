@@ -39,8 +39,8 @@ class SpellDetector(QObject):
         config = self.config_manager.load_config()
         self.scan_area = config.get('scan_area', None)  # Region to scan for spell icons
         self.detection_frequency = config.get('detection_frequency', 0.1)  # Seconds between scans
-        self.confidence_threshold = config.get('confidence_threshold', 0.8)  # Minimum match confidence
-        self.cooldown = config.get('cooldown', 0.5)  # Cooldown between actions in seconds
+        self.confidence_threshold = config.get('confidence_threshold', 0.5)  # Minimum match confidence
+        self.cooldown = config.get('cooldown', 0.3)  # Cooldown between actions in seconds
         self.keybinds = config.get('keybinds', {})  # Map of icon names to keys
         self.icon_templates = config.get('icon_templates', {})  # Map of icon names to template regions
         
@@ -151,12 +151,31 @@ class SpellDetector(QObject):
     def update_config(self):
         """Update configuration from config manager"""
         config = self.config_manager.load_config()
-        self.scan_area = config.get('scan_area')
+        
+        # Check if using expansion-based structure
+        if 'expansions' in config:
+            current_exp = config.get('current_expansion')
+            current_class = config.get('current_class')
+            
+            if current_exp and current_class:
+                # Get class-specific config
+                class_config = config.get('expansions', {}).get(current_exp, {}).get('classes', {}).get(current_class, {})
+                
+                # Update settings from class config
+                self.scan_area = class_config.get('scan_area')
+                self.keybinds = class_config.get('keybinds', {})
+                self.icon_templates = class_config.get('icon_templates', {})
+        else:
+            # Legacy structure
+            self.scan_area = config.get('scan_area')
+            self.keybinds = config.get('keybinds', {})
+            self.icon_templates = config.get('icon_templates', {})
+        
+        # Global settings
         self.detection_frequency = config.get('detection_frequency', 0.1)
         self.confidence_threshold = config.get('confidence_threshold', 0.8)
         self.cooldown = config.get('cooldown', 0.5)
-        self.keybinds = config.get('keybinds', {})
-        self.icon_templates = config.get('icon_templates', {})
+        
         logger.info("Configuration updated")
         
     def is_running(self):
@@ -170,6 +189,10 @@ class SpellDetector(QObject):
     def _detection_loop(self):
         """Main detection loop that runs in a separate thread"""
         logger.info("Detection loop started")
+        
+        # Initialize last_detection_time if not present
+        if not hasattr(self, 'last_detection_time'):
+            self.last_detection_time = 0
         
         while self.running:
             if self.paused:
@@ -197,43 +220,54 @@ class SpellDetector(QObject):
             highest_confidence = 0
             best_match = None
             
-            for name, template in self.templates.items():
-                logger.debug(f"Checking template: {name}")
-                confidence = self._match_template(screenshot, template)
-                logger.debug(f"Template {name} confidence: {confidence:.4f}")
-                
-                if confidence > highest_confidence:
-                    highest_confidence = confidence
-                    best_match = name
+            # Use icon_templates instead of templates
+            for name, template in self.icon_templates.items():
+                # Skip if no keybind exists for this template
+                if name not in self.keybinds:
+                    continue
                     
-                # If confidence is above threshold, consider it a match
-                if confidence > self.confidence_threshold:
-                    logger.info(f"Detected '{name}' with confidence {confidence:.4f}")
+                try:
+                    # Match the template
+                    result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+                    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+                    confidence = max_val
                     
-                    # Check if the spell is on cooldown
-                    now = time.time()
-                    if now - self.last_detection_time < self.cooldown:
-                        logger.debug(f"Spell on cooldown, skipping action")
-                        detected = True
-                        continue
+                    logger.debug(f"Template {name} confidence: {confidence:.4f}")
+                    
+                    if confidence > highest_confidence:
+                        highest_confidence = confidence
+                        best_match = name
                         
-                    # Spell detected, press the corresponding key
-                    key = self.keybinds.get(name)
-                    if key:
-                        logger.info(f"Pressing key: {key} for spell: {name}")
-                        self.keyboard_controller.press_key(key)
-                        self.icon_detected.emit(name, confidence)
-                        self.last_detection_time = now
-                        detected = True
-                        break
-                    else:
-                        logger.warning(f"No keybind defined for detected spell: {name}")
+                    # If confidence is above threshold, consider it a match
+                    if confidence > self.confidence_threshold:
+                        logger.info(f"Detected '{name}' with confidence {confidence:.4f}")
+                        
+                        # Check if the spell is on cooldown
+                        now = time.time()
+                        if now - self.last_detection_time < self.cooldown:
+                            logger.debug(f"Spell on cooldown, skipping action")
+                            detected = True
+                            continue
+                            
+                        # Spell detected, press the corresponding key
+                        key = self.keybinds.get(name)
+                        if key:
+                            logger.info(f"Pressing key: {key} for spell: {name}")
+                            self.keyboard.press_key(key)
+                            self.icon_detected.emit(name, confidence)
+                            self.last_detection_time = now
+                            detected = True
+                            break
+                        else:
+                            logger.warning(f"No keybind defined for detected spell: {name}")
+                except Exception as e:
+                    logger.error(f"Error matching template {name}: {str(e)}")
             
             if not detected and best_match:
                 logger.debug(f"Best match was '{best_match}' with confidence {highest_confidence:.4f} (below threshold)")
             elif not detected:
                 logger.debug("No matches found")
-                
+                    
             # Wait before next detection
             time.sleep(self.detection_frequency)
     

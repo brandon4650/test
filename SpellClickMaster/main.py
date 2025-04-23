@@ -46,6 +46,39 @@ def is_admin():
             return os.geteuid() == 0  # Unix-based check for root
     except:
         return False
+    
+def set_predefined_scan_area():
+    """Set predefined scan area from the error message coordinates"""
+    import json
+    import os
+    import logging
+    
+    logger = logging.getLogger('setup')
+    
+    config_file = os.path.join(os.path.dirname(__file__), 'spell_caster_config.json')
+    
+    try:
+        # Check if the file exists and is accessible
+        if os.path.exists(config_file):
+            # Load existing config
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+        else:
+            # Create a new config
+            config = {}
+        
+        # Set the scan area to the coordinates from the error message
+        config['scan_area'] = [1567, 1023, 75, 74]
+        
+        # Save the config
+        with open(config_file, 'w') as f:
+            json.dump(config, f, indent=2)
+            
+        logger.info(f"Predefined scan area set to X: 1567, Y: 1023, W: 75, H: 74")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to set predefined scan area: {str(e)}")
+        return False
 
 def show_error_dialog(message, details=None):
     """Show an error dialog with optional details"""

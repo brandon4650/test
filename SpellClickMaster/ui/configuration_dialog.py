@@ -341,6 +341,7 @@ class ConfigurationDialog(QDialog):
         
     def setup_settings_tab(self, tab):
         """Set up the detection settings tab"""
+        import time
         layout = QVBoxLayout()
         
         # Scan area group
@@ -361,6 +362,24 @@ class ConfigurationDialog(QDialog):
         scan_layout.addRow("Y Position:", self.y_spin)
         scan_layout.addRow("Width:", self.width_spin)
         scan_layout.addRow("Height:", self.height_spin)
+        
+        # Add button to capture coordinates from the screen
+        capture_area_button = QPushButton("Capture Scan Area")
+        capture_area_button.clicked.connect(self.capture_scan_area)
+        scan_layout.addRow(capture_area_button)
+        
+        # Manual coordinate entry
+        coord_layout = QHBoxLayout()
+        self.coord_input = QLineEdit()
+        self.coord_input.setPlaceholderText("X: 1567 Y: 1023 W: 75 H: 74")
+        
+        set_coords_button = QPushButton("Set")
+        set_coords_button.clicked.connect(self.set_coords_from_text)
+        
+        coord_layout.addWidget(self.coord_input)
+        coord_layout.addWidget(set_coords_button)
+        
+        scan_layout.addRow("Manual Coordinates:", coord_layout)
         
         scan_group.setLayout(scan_layout)
         layout.addWidget(scan_group)
@@ -404,10 +423,196 @@ class ConfigurationDialog(QDialog):
         self.width_spin.setValue(scan_area[2])
         self.height_spin.setValue(scan_area[3])
         
+        # Show current coordinates in the text field
+        self.coord_input.setText(f"X: {scan_area[0]} Y: {scan_area[1]} W: {scan_area[2]} H: {scan_area[3]}")
+        
         self.frequency_spin.setValue(self.config.get('detection_frequency', 0.1))
         self.confidence_spin.setValue(self.config.get('confidence_threshold', 0.8))
         self.cooldown_spin.setValue(self.config.get('cooldown', 0.5))
+    
+    # Add these methods to your ConfigurationDialog class
+
+    def capture_scan_area(self):
+        """Capture scan area coordinates from the screen"""
+        import time
+        import cv2
+        from screen_capture import ScreenCapture
         
+        # Hide the dialog
+        self.hide()
+        
+        # Show instructions
+        msg = QMessageBox()
+        msg.setWindowTitle("Capture Scan Area")
+        msg.setText("A screen capture window will open.\n\n"
+                    "Click and drag to select the area to scan for spell icons, then press Enter.\n"
+                    "Press Escape to cancel.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+        
+        # Small delay to allow the dialog to close
+        time.sleep(0.5)
+        
+        screen_capture = ScreenCapture()
+        
+        try:
+            # Capture full screen
+            screenshot = screen_capture.capture_full_screen()
+            if screenshot is None:
+                QMessageBox.warning(
+                    self,
+                    "Capture Failed",
+                    "Failed to capture screen. Please try again."
+                )
+                self.show()
+                return
+                
+            # Create window to display the screenshot
+            window_name = "Select Scan Area (Click and drag to select, then press Enter)"
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            
+            # Set up mouse callback for selection
+            selection = {'x': -1, 'y': -1, 'w': 0, 'h': 0, 'selecting': False, 'complete': False}
+            
+            def mouse_callback(event, x, y, flags, param):
+                if event == cv2.EVENT_LBUTTONDOWN:
+                    selection['x'] = x
+                    selection['y'] = y
+                    selection['selecting'] = True
+                    selection['complete'] = False
+                elif event == cv2.EVENT_MOUSEMOVE and selection['selecting']:
+                    selection['w'] = x - selection['x']
+                    selection['h'] = y - selection['y']
+                elif event == cv2.EVENT_LBUTTONUP:
+                    selection['w'] = x - selection['x']
+                    selection['h'] = y - selection['y']
+                    selection['selecting'] = False
+                    selection['complete'] = True
+            
+            cv2.setMouseCallback(window_name, mouse_callback)
+            
+            # Display the screenshot and allow selection
+            clone = screenshot.copy()
+            while True:
+                img = clone.copy()
+                if selection['x'] >= 0 and (selection['selecting'] or selection['complete']):
+                    x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
+                    # Ensure positive width and height
+                    if w < 0:
+                        x += w
+                        w = -w
+                    if h < 0:
+                        y += h
+                        h = -h
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    
+                    # Show coordinates
+                    text = f"X: {x} Y: {y} W: {w} H: {h}"
+                    cv2.putText(img, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                
+                cv2.imshow(window_name, img)
+                key = cv2.waitKey(1)
+                
+                # Enter key accepts the selection
+                if key == 13 and selection['complete'] and selection['w'] > 0 and selection['h'] > 0:
+                    break
+                # Escape key cancels
+                elif key == 27:
+                    selection['complete'] = False
+                    break
+            
+            # Clean up
+            cv2.destroyAllWindows()
+            
+            # Process selection if completed
+            if selection['complete']:
+                x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
+                
+                # Ensure positive width and height
+                if w < 0:
+                    x += w
+                    w = -w
+                if h < 0:
+                    y += h
+                    h = -h
+                
+                # Update the spin boxes
+                if x >= 0 and y >= 0 and w > 0 and h > 0:
+                    self.x_spin.setValue(x)
+                    self.y_spin.setValue(y)
+                    self.width_spin.setValue(w)
+                    self.height_spin.setValue(h)
+                    
+                    # Update the coordinate input field
+                    self.coord_input.setText(f"X: {x} Y: {y} W: {w} H: {h}")
+                    
+                    # Notify user
+                    QMessageBox.information(
+                        self,
+                        "Success", 
+                        f"Scan area coordinates set to X: {x}, Y: {y}, W: {w}, H: {h}"
+                    )
+                else:
+                    QMessageBox.warning(
+                        self,
+                        "Invalid Selection", 
+                        "The selected area is invalid. Please try again."
+                    )
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Cancelled", 
+                    "Scan area capture was cancelled."
+                )
+        
+        finally:
+            # Show dialog again
+            self.show()
+            self.activateWindow()
+    
+    def set_coords_from_text(self):
+        """Set scan area coordinates from text input"""
+        coords_text = self.coord_input.text().strip()
+        
+        # Try to parse the coordinates from the text
+        try:
+            # Extract X, Y, W, H values using a simple parsing approach
+            import re
+            
+            # Look for patterns like "X: 1567 Y: 1023 W: 75 H: 74"
+            x_match = re.search(r'X:\s*(\d+)', coords_text, re.IGNORECASE)
+            y_match = re.search(r'Y:\s*(\d+)', coords_text, re.IGNORECASE)
+            w_match = re.search(r'W:\s*(\d+)', coords_text, re.IGNORECASE)
+            h_match = re.search(r'H:\s*(\d+)', coords_text, re.IGNORECASE)
+            
+            if not all([x_match, y_match, w_match, h_match]):
+                raise ValueError("Could not find all required coordinates")
+                
+            x = int(x_match.group(1))
+            y = int(y_match.group(1))
+            w = int(w_match.group(1))
+            h = int(h_match.group(1))
+            
+            # Update the spin boxes
+            self.x_spin.setValue(x)
+            self.y_spin.setValue(y)
+            self.width_spin.setValue(w)
+            self.height_spin.setValue(h)
+            
+            # Notify user
+            QMessageBox.information(
+                self,
+                "Success", 
+                f"Scan area coordinates set to X: {x}, Y: {y}, W: {w}, H: {h}"
+            )
+            
+        except Exception as e:
+            QMessageBox.warning(
+                self,
+                "Invalid Coordinates", 
+                f"Failed to parse coordinates: {str(e)}\n\nExpected format: X: 1567 Y: 1023 W: 75 H: 74"
+            )
+            
     def populate_spell_list(self):
         """Populate the spell list with the configured templates"""
         self.spell_list.clear()
@@ -767,22 +972,63 @@ class ConfigurationDialog(QDialog):
         
     def save_configuration(self):
         """Save the configuration changes"""
-        # Update scan area
-        scan_area = (
-            self.x_spin.value(),
-            self.y_spin.value(),
-            self.width_spin.value(),
-            self.height_spin.value()
-        )
-        self.config['scan_area'] = scan_area
+        # Get full config
+        config = self.config_manager.load_config()
         
-        # Update detection settings
-        self.config['detection_frequency'] = self.frequency_spin.value()
-        self.config['confidence_threshold'] = self.confidence_spin.value()
-        self.config['cooldown'] = self.cooldown_spin.value()
+        # Check if using expansion-based structure
+        if 'expansions' in config and 'current_expansion' in config and 'current_class' in config:
+            current_exp = config.get('current_expansion')
+            current_class = config.get('current_class')
+            
+            # Get class config or create new one
+            class_config = config.get('expansions', {}).get(current_exp, {}).get('classes', {}).get(current_class, {})
+            if not class_config:
+                class_config = {}
+                
+            # Update scan area
+            scan_area = [
+                self.x_spin.value(),
+                self.y_spin.value(),
+                self.width_spin.value(),
+                self.height_spin.value()
+            ]
+            class_config['scan_area'] = scan_area
+            
+            # Update keybinds
+            class_config['keybinds'] = self.config.get('keybinds', {})
+            
+            # Update templates
+            class_config['icon_templates'] = self.config.get('icon_templates', {})
+            
+            # Save back to config
+            if 'expansions' not in config:
+                config['expansions'] = {}
+                
+            if current_exp not in config['expansions']:
+                config['expansions'][current_exp] = {'name': '', 'classes': {}}
+                
+            if 'classes' not in config['expansions'][current_exp]:
+                config['expansions'][current_exp]['classes'] = {}
+                
+            config['expansions'][current_exp]['classes'][current_class] = class_config
+        else:
+            # Legacy structure - update directly
+            # Update scan area
+            scan_area = [
+                self.x_spin.value(),
+                self.y_spin.value(),
+                self.width_spin.value(),
+                self.height_spin.value()
+            ]
+            config['scan_area'] = scan_area
+        
+        # Update global settings
+        config['detection_frequency'] = self.frequency_spin.value()
+        config['confidence_threshold'] = self.confidence_spin.value()
+        config['cooldown'] = self.cooldown_spin.value()
         
         # Save configuration
-        self.config_manager.save_config(self.config)
+        self.config_manager.save_config(config)
         
         # Accept dialog
         self.accept()
