@@ -135,76 +135,106 @@ class ConfigurationDialog(QDialog):
         self.populate_keybind_list()
 
     def update_spell_template(self):
-    """Update the template for an existing spell by drawing a selection box"""
-    current_item = self.spell_list.currentItem()
-    if not current_item:
-        return
+        """Update the template for an existing spell by drawing a selection box"""
+        import time
         
-    spell_name = current_item.data(Qt.UserRole)
-    if not spell_name:
-        return
-    # Minimize dialog 
-    self.hide()
-    
-    # Show instructions
-    msg = QMessageBox()
-    msg.setWindowTitle("Capture Spell Icon")
-    msg.setText("A screen capture window will open.\n\n"
-                "Click and drag to select the spell icon region, then press Enter.\n"
-                "Press Escape to cancel.")
-    msg.setStandardButtons(QMessageBox.Ok)
-    msg.exec_()
-    
-    # Small delay to allow the dialog to close
-    time.sleep(0.5)
-    
-    from screen_capture import ScreenCapture
-    import cv2
-    
-    screen_capture = ScreenCapture()
-    
-    try:
-        # Capture full screen
-        screenshot = screen_capture.capture_full_screen()
-        if screenshot is None:
-            QMessageBox.warning(
-                self,
-                "Capture Failed",
-                "Failed to capture screen. Please try again."
-            )
-            self.show()
+        current_item = self.spell_list.currentItem()
+        if not current_item:
             return
             
-        # Create window to display the screenshot
-        window_name = "Select Spell Icon (Click and drag to select, then press Enter)"
-        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        spell_name = current_item.data(Qt.UserRole)
+        if not spell_name:
+            return
+            
+        # Minimize dialog 
+        self.hide()
         
-        # Set up mouse callback for selection
-        selection = {'x': -1, 'y': -1, 'w': 0, 'h': 0, 'selecting': False, 'complete': False}
+        # Show instructions
+        msg = QMessageBox()
+        msg.setWindowTitle("Capture Spell Icon")
+        msg.setText("A screen capture window will open.\n\n"
+                    "Click and drag to select the spell icon region, then press Enter.\n"
+                    "Press Escape to cancel.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
         
-        def mouse_callback(event, x, y, flags, param):
-            if event == cv2.EVENT_LBUTTONDOWN:
-                selection['x'] = x
-                selection['y'] = y
-                selection['selecting'] = True
-                selection['complete'] = False
-            elif event == cv2.EVENT_MOUSEMOVE and selection['selecting']:
-                selection['w'] = x - selection['x']
-                selection['h'] = y - selection['y']
-            elif event == cv2.EVENT_LBUTTONUP:
-                selection['w'] = x - selection['x']
-                selection['h'] = y - selection['y']
-                selection['selecting'] = False
-                selection['complete'] = True
+        # Small delay to allow the dialog to close
+        time.sleep(0.5)
         
-        cv2.setMouseCallback(window_name, mouse_callback)
+        from screen_capture import ScreenCapture
+        import cv2
         
-        # Display the screenshot and allow selection
-        clone = screenshot.copy()
-        while True:
-            img = clone.copy()
-            if selection['x'] >= 0 and (selection['selecting'] or selection['complete']):
+        screen_capture = ScreenCapture()
+        
+        try:
+            # Capture full screen
+            screenshot = screen_capture.capture_full_screen()
+            if screenshot is None:
+                QMessageBox.warning(
+                    self,
+                    "Capture Failed",
+                    "Failed to capture screen. Please try again."
+                )
+                self.show()
+                return
+                
+            # Create window to display the screenshot
+            window_name = "Select Spell Icon (Click and drag to select, then press Enter)"
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            
+            # Set up mouse callback for selection
+            selection = {'x': -1, 'y': -1, 'w': 0, 'h': 0, 'selecting': False, 'complete': False}
+            
+            def mouse_callback(event, x, y, flags, param):
+                if event == cv2.EVENT_LBUTTONDOWN:
+                    selection['x'] = x
+                    selection['y'] = y
+                    selection['selecting'] = True
+                    selection['complete'] = False
+                elif event == cv2.EVENT_MOUSEMOVE and selection['selecting']:
+                    selection['w'] = x - selection['x']
+                    selection['h'] = y - selection['y']
+                elif event == cv2.EVENT_LBUTTONUP:
+                    selection['w'] = x - selection['x']
+                    selection['h'] = y - selection['y']
+                    selection['selecting'] = False
+                    selection['complete'] = True
+            
+            cv2.setMouseCallback(window_name, mouse_callback)
+            
+            # Display the screenshot and allow selection
+            clone = screenshot.copy()
+            while True:
+                img = clone.copy()
+                if selection['x'] >= 0 and (selection['selecting'] or selection['complete']):
+                    x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
+                    # Ensure positive width and height
+                    if w < 0:
+                        x += w
+                        w = -w
+                    if h < 0:
+                        y += h
+                        h = -h
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                
+                cv2.imshow(window_name, img)
+                key = cv2.waitKey(1)
+                
+                # Enter key accepts the selection
+                if key == 13 and selection['complete'] and selection['w'] > 0 and selection['h'] > 0:
+                    break
+                # Escape key cancels
+                elif key == 27:
+                    selection['complete'] = False
+                    break
+            
+            # Clean up
+            cv2.destroyAllWindows()
+            
+            # Process selection if completed
+            if selection['complete']:
                 x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
+                
                 # Ensure positive width and height
                 if w < 0:
                     x += w
@@ -212,75 +242,48 @@ class ConfigurationDialog(QDialog):
                 if h < 0:
                     y += h
                     h = -h
-                cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            
-            cv2.imshow(window_name, img)
-            key = cv2.waitKey(1)
-            
-            # Enter key accepts the selection
-            if key == 13 and selection['complete'] and selection['w'] > 0 and selection['h'] > 0:
-                break
-            # Escape key cancels
-            elif key == 27:
-                selection['complete'] = False
-                break
-        
-        # Clean up
-        cv2.destroyAllWindows()
-        
-        # Process selection if completed
-        if selection['complete']:
-            x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
-            
-            # Ensure positive width and height
-            if w < 0:
-                x += w
-                w = -w
-            if h < 0:
-                y += h
-                h = -h
-            
-            # Extract the selected region as a template
-            if x >= 0 and y >= 0 and w > 0 and h > 0:
-                template = screenshot[y:y+h, x:x+w].copy()
                 
-                # Resize template to standard size
-                template = cv2.resize(template, (64, 64))
-                
-                # Update the template
-                icon_templates = self.config.get('icon_templates', {})
-                icon_templates[spell_name] = template
-                
-                # Update config
-                self.config['icon_templates'] = icon_templates
-                
-                # Update UI
-                self.populate_spell_list()
-                
-                # Notify user
-                QMessageBox.information(
-                    self,
-                    "Success", 
-                    f"Updated template for spell '{spell_name}'"
-                )
+                # Extract the selected region as a template
+                if x >= 0 and y >= 0 and w > 0 and h > 0:
+                    template = screenshot[y:y+h, x:x+w].copy()
+                    
+                    # Resize template to standard size
+                    template = cv2.resize(template, (64, 64))
+                    
+                    # Update the template
+                    icon_templates = self.config.get('icon_templates', {})
+                    icon_templates[spell_name] = template
+                    
+                    # Update config
+                    self.config['icon_templates'] = icon_templates
+                    
+                    # Update UI
+                    self.populate_spell_list()
+                    
+                    # Notify user
+                    QMessageBox.information(
+                        self,
+                        "Success", 
+                        f"Updated template for spell '{spell_name}'"
+                    )
+                else:
+                    QMessageBox.warning(
+                        self,
+                        "Invalid Selection", 
+                        "The selected area is invalid. Please try again."
+                    )
             else:
                 QMessageBox.warning(
                     self,
-                    "Invalid Selection", 
-                    "The selected area is invalid. Please try again."
+                    "Cancelled", 
+                    "Template capture was cancelled."
                 )
-        else:
-            QMessageBox.warning(
-                self,
-                "Cancelled", 
-                "Template capture was cancelled."
-            )
+        
+        finally:
+            # Show dialog again
+            self.show()
+            self.activateWindow()
     
-    finally:
-        # Show dialog again
-        self.show()
-        self.activateWindow()
-
     def on_spell_name_changed(self):
         """Handle spell name changes"""
         new_name = self.spell_name_edit.text().strip()
