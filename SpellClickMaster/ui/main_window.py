@@ -17,6 +17,7 @@ from spell_detector import SpellDetector
 from screen_capture import ScreenCapture
 from ui.setup_wizard import SetupWizard
 from ui.configuration_dialog import ConfigurationDialog
+from ui.enhanced_config_dialog import EnhancedConfigurationDialog
 
 logger = logging.getLogger('ui.main_window')
 
@@ -376,11 +377,171 @@ class MainWindow(QMainWindow):
             self.spell_detector.update_config()
             
     def show_configuration_dialog(self):
-        """Show the spell configuration dialog"""
-        dialog = ConfigurationDialog(self.config_manager, parent=self)
+        """Show the enhanced configuration dialog with expansion/class support"""
+        dialog = EnhancedConfigurationDialog(self.config_manager, parent=self)
         if dialog.exec_():
             # Reload configuration after dialog completes
             self.spell_detector.update_config()
+            
+            # Update status bar
+            self.update_status_bar()
+
+    def update_status_bar(self):
+        """Update the status bar with current expansion/class information"""
+        config = self.config_manager.load_config()
+        current_exp = config.get('current_expansion')
+        current_class = config.get('current_class')
+        
+        if current_exp and current_class and 'expansions' in config:
+            expansions = config.get('expansions', {})
+            
+            if current_exp in expansions:
+                exp_data = expansions[current_exp]
+                exp_name = exp_data.get('name', current_exp)
+                
+                classes = exp_data.get('classes', {})
+                if current_class in classes:
+                    class_data = classes[current_class]
+                    if isinstance(class_data, dict):
+                        class_name = class_data.get('name', current_class)
+                    else:
+                        class_name = current_class
+                        
+                    self.status_bar.showMessage(f"Using {exp_name} - {class_name}")
+                    return
+        
+        self.status_bar.showMessage("Ready")
+
+    def add_expansion_class_menu(self):
+        """Add a new menu for expansion and class management"""
+        # Create the menu
+        expansion_menu = self.menuBar().addMenu("&Expansions")
+        
+        # Add menu items
+        manage_action = QAction("&Manage Expansions and Classes", self)
+        manage_action.triggered.connect(self.show_configuration_dialog)
+        expansion_menu.addAction(manage_action)
+        
+        # Add separator
+        expansion_menu.addSeparator()
+        
+        # Dynamic submenu for quick switching between expansions
+        self.expansion_submenu = QMenu("Switch &Expansion", self)
+        expansion_menu.addMenu(self.expansion_submenu)
+        
+        # Dynamic submenu for quick switching between classes
+        self.class_submenu = QMenu("Switch &Class", self)
+        expansion_menu.addMenu(self.class_submenu)
+        
+        # Populate submenus
+        self.update_expansion_class_menus()
+    
+    def update_expansion_class_menus(self):
+        """Update the expansion and class submenus"""
+        # Clear existing items
+        self.expansion_submenu.clear()
+        self.class_submenu.clear()
+        
+        # Get current config
+        config = self.config_manager.load_config()
+        current_exp = config.get('current_expansion')
+        current_class = config.get('current_class')
+        
+        # Add expansion items
+        expansions = config.get('expansions', {})
+        for exp_id, exp_data in expansions.items():
+            exp_name = exp_data.get('name', exp_id)
+            action = QAction(exp_name, self)
+            action.setCheckable(True)
+            action.setChecked(exp_id == current_exp)
+            action.triggered.connect(lambda checked, exp=exp_id: self.switch_expansion(exp))
+            self.expansion_submenu.addAction(action)
+        
+        # Add class items (if expansion selected)
+        if current_exp and current_exp in expansions:
+            exp_data = expansions[current_exp]
+            classes = exp_data.get('classes', {})
+            
+            for class_id, class_data in classes.items():
+                if isinstance(class_data, dict):
+                    class_name = class_data.get('name', class_id)
+                else:
+                    class_name = class_id
+                    
+                action = QAction(class_name, self)
+                action.setCheckable(True)
+                action.setChecked(class_id == current_class)
+                action.triggered.connect(lambda checked, cls=class_id: self.switch_class(cls))
+                self.class_submenu.addAction(action)
+    
+    def switch_expansion(self, expansion_id):
+        """Switch to a different expansion"""
+        # Get current config
+        config = self.config_manager.load_config()
+        
+        # Check if expansion exists
+        if expansion_id not in config.get('expansions', {}):
+            self.status_bar.showMessage(f"Error: Expansion '{expansion_id}' not found")
+            return
+        
+        # Update current expansion
+        config['current_expansion'] = expansion_id
+        
+        # Reset current class if not valid for this expansion
+        current_class = config.get('current_class')
+        exp_data = config['expansions'][expansion_id]
+        if 'classes' not in exp_data or current_class not in exp_data['classes']:
+            # Set to first class or None
+            if 'classes' in exp_data and exp_data['classes']:
+                config['current_class'] = next(iter(exp_data['classes']))
+            else:
+                config['current_class'] = None
+        
+        # Save config
+        if self.config_manager.save_config(config):
+            # Update detector config
+            self.spell_detector.update_config()
+            
+            # Update UI
+            self.update_expansion_class_menus()
+            self.update_status_bar()
+            
+            self.status_bar.showMessage(f"Switched to expansion: {expansion_id}")
+        else:
+            self.status_bar.showMessage("Error saving configuration")
+    
+    def switch_class(self, class_id):
+        """Switch to a different class"""
+        # Get current config
+        config = self.config_manager.load_config()
+        current_exp = config.get('current_expansion')
+        
+        # Check if expansion exists
+        if current_exp not in config.get('expansions', {}):
+            self.status_bar.showMessage("Error: No expansion selected")
+            return
+        
+        # Check if class exists in current expansion
+        exp_data = config['expansions'][current_exp]
+        if 'classes' not in exp_data or class_id not in exp_data['classes']:
+            self.status_bar.showMessage(f"Error: Class '{class_id}' not found in expansion '{current_exp}'")
+            return
+        
+        # Update current class
+        config['current_class'] = class_id
+        
+        # Save config
+        if self.config_manager.save_config(config):
+            # Update detector config
+            self.spell_detector.update_config()
+            
+            # Update UI
+            self.update_expansion_class_menus()
+            self.update_status_bar()
+            
+            self.status_bar.showMessage(f"Switched to class: {class_id}")
+        else:
+            self.status_bar.showMessage("Error saving configuration")
             
     def show_about_dialog(self):
         """Show the about dialog"""

@@ -92,13 +92,14 @@
             "Elemental Blast": "alt+3",
             "Icefury": "alt+4",
             "Liquid Magma Totem": "alt+5"
-          }
+          },
+          "name": "shaman"
         }
       }
     }
   },
-  "current_expansion": "5.4.8",
-  "current_class": "rogue",
+  "current_expansion": "11.1.5",
+  "current_class": "shaman",
   "scan_area": [
     712,
     966,
