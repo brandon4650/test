@@ -557,6 +557,20 @@ class ExpansionClassManager(QWidget):
         self.edit_class_button.setEnabled(current is not None)
         self.remove_class_button.setEnabled(current is not None)
         
+        # If a class is selected, check if it has templates
+        if current is not None:
+            class_id = current.data(Qt.UserRole)
+            
+            # Get current expansion
+            current_exp_id = self.expansion_combo.currentData()
+            
+            if current_exp_id and current_exp_id in self.config.get('expansions', {}):
+                # Update current class in config temporarily
+                self.config['current_class'] = class_id
+                
+                # Check if this class has templates
+                self.check_class_templates()
+        
     def add_expansion(self):
         """Add a new expansion"""
         # Get expansion data from dialog
@@ -993,3 +1007,151 @@ class ExpansionClassManager(QWidget):
         current_class_id = self.class_combo.currentData()
         
         return current_exp_id, current_class_id
+    
+    """
+    Improvements to ExpansionClassManager to handle classes without spell templates
+    """
+    
+    # Add this method to ExpansionClassManager class in expansion_class_manager.py
+    def check_class_templates(self):
+        """Check if the current class has spell templates and offer to create them if not"""
+        # Get current expansion and class
+        current_exp_id, current_class_id = self.get_current_selection()
+        
+        if not current_exp_id or not current_class_id:
+            return
+            
+        # Get class config
+        expansions = self.config.get('expansions', {})
+        
+        if current_exp_id not in expansions:
+            return
+            
+        exp_data = expansions[current_exp_id]
+        classes = exp_data.get('classes', {})
+        
+        if current_class_id not in classes:
+            return
+            
+        class_config = classes[current_class_id]
+        if not isinstance(class_config, dict):
+            # Initialize with empty dict if not a dict
+            classes[current_class_id] = {}
+            class_config = classes[current_class_id]
+        
+        # Check if this class has spell templates
+        has_templates = False
+        if 'icon_templates' in class_config and class_config['icon_templates']:
+            has_templates = True
+            
+        # If no templates, ask if user wants to create them
+        if not has_templates:
+            # Check if we're already in a configuration dialog
+            from ui.enhanced_config_dialog import EnhancedConfigurationDialog
+            top_level_parent = self
+            while top_level_parent.parent():
+                top_level_parent = top_level_parent.parent()
+                
+            if isinstance(top_level_parent, EnhancedConfigurationDialog):
+                # We're already in the config dialog, just switch to the spells tab
+                top_level_parent.tab_widget.setCurrentIndex(0)
+                return
+                
+            # Otherwise, show the prompt
+            from PyQt5.QtWidgets import QMessageBox
+            
+            reply = QMessageBox.question(
+                self,
+                "No Spell Templates",
+                f"The class '{class_config.get('name', current_class_id)}' doesn't have any spell templates yet. "
+                "Would you like to configure spell templates for this class now?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes
+            )
+            
+            if reply == QMessageBox.Yes:
+                self.open_spell_configuration()
+
+    
+        
+    # Add this method to ExpansionClassManager class as well
+    def open_spell_configuration(self):
+        """Open the configuration dialog focused on spell templates for the current class"""
+        # Get parent window
+        top_level_parent = self
+        while top_level_parent.parent():
+            top_level_parent = top_level_parent.parent()
+        
+        # If we're already in a configuration dialog, just switch to the spells tab
+        from ui.enhanced_config_dialog import EnhancedConfigurationDialog
+        if isinstance(top_level_parent, EnhancedConfigurationDialog):
+            # Switch to the spells tab
+            top_level_parent.tab_widget.setCurrentIndex(0)  # Switch to the spells tab
+            return
+            
+        # Otherwise, open a new dialog
+        from PyQt5.QtWidgets import QApplication
+        main_window = QApplication.activeWindow()
+        
+        dialog = EnhancedConfigurationDialog(self.config_manager, parent=main_window)
+        dialog.tab_widget.setCurrentIndex(0)  # Switch to the spells tab
+        dialog.exec_()
+    # Then modify the apply_selection method to check for templates after applying the selection
+    def apply_selection(self):
+        """Apply the current expansion and class selection"""
+        current_exp_id = self.expansion_combo.currentData()
+        current_class_id = self.class_combo.currentData()
+        
+        if not current_exp_id or not current_class_id or not self.class_combo.isEnabled():
+            QMessageBox.warning(
+                self,
+                "Invalid Selection",
+                "Please select a valid expansion and class."
+            )
+            return
+            
+        # Check if selection exists
+        expansions = self.config.get('expansions', {})
+        if current_exp_id not in expansions:
+            QMessageBox.warning(
+                self,
+                "Invalid Expansion",
+                "The selected expansion is not valid."
+            )
+            return
+            
+        exp_data = expansions[current_exp_id]
+        classes = exp_data.get('classes', {})
+        
+        if current_class_id not in classes:
+            QMessageBox.warning(
+                self,
+                "Invalid Class",
+                "The selected class is not valid for this expansion."
+            )
+            return
+            
+        # Update configuration
+        self.config['current_expansion'] = current_exp_id
+        self.config['current_class'] = current_class_id
+        
+        # Save configuration
+        if self.config_manager.save_config(self.config):
+            QMessageBox.information(
+                self,
+                "Selection Applied",
+                f"Now using {exp_data.get('name', current_exp_id)} - "
+                f"{classes[current_class_id].get('name', current_class_id) if isinstance(classes[current_class_id], dict) else current_class_id}"
+            )
+            
+            # Emit config changed signal
+            self.config_changed.emit()
+            
+            # Check for templates
+            self.check_class_templates()
+        else:
+            QMessageBox.warning(
+                self,
+                "Save Error",
+                "Failed to save configuration."
+            )

@@ -151,9 +151,7 @@ class EnhancedConfigurationDialog(QDialog):
         self.populate_keybind_list()
 
     def update_spell_template(self):
-        """Update the template for an existing spell by drawing a selection box"""
-        import time
-        
+        """Update the template for an existing spell by capturing from screen"""
         current_item = self.spell_list.currentItem()
         if not current_item:
             return
@@ -162,146 +160,33 @@ class EnhancedConfigurationDialog(QDialog):
         if not spell_name:
             return
             
-        # Minimize dialog 
-        self.hide()
-        
-        # Show instructions
-        msg = QMessageBox()
-        msg.setWindowTitle("Capture Spell Icon")
-        msg.setText("A screen capture window will open.\n\n"
-                    "Click and drag to select the spell icon region, then press Enter.\n"
-                    "Press Escape to cancel.")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec_()
-        
-        # Small delay to allow the dialog to close
-        time.sleep(0.5)
-        
-        from screen_capture import ScreenCapture
-        import cv2
-        
-        screen_capture = ScreenCapture()
-        
-        try:
-            # Capture full screen
-            screenshot = screen_capture.capture_full_screen()
-            if screenshot is None:
-                QMessageBox.warning(
-                    self,
-                    "Capture Failed",
-                    "Failed to capture screen. Please try again."
-                )
-                self.show()
-                return
+        # Use the shared capture method
+        def capture_callback(template):
+            # Get current class config
+            class_config = self.get_current_class_config()
+            
+            # Initialize icon_templates if needed
+            if 'icon_templates' not in class_config:
+                class_config['icon_templates'] = {}
                 
-            # Create window to display the screenshot
-            window_name = "Select Spell Icon (Click and drag to select, then press Enter)"
-            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            # Update the template
+            class_config['icon_templates'][spell_name] = template
             
-            # Set up mouse callback for selection
-            selection = {'x': -1, 'y': -1, 'w': 0, 'h': 0, 'selecting': False, 'complete': False}
+            # Save back to config
+            self.save_current_class_config(class_config)
             
-            def mouse_callback(event, x, y, flags, param):
-                if event == cv2.EVENT_LBUTTONDOWN:
-                    selection['x'] = x
-                    selection['y'] = y
-                    selection['selecting'] = True
-                    selection['complete'] = False
-                elif event == cv2.EVENT_MOUSEMOVE and selection['selecting']:
-                    selection['w'] = x - selection['x']
-                    selection['h'] = y - selection['y']
-                elif event == cv2.EVENT_LBUTTONUP:
-                    selection['w'] = x - selection['x']
-                    selection['h'] = y - selection['y']
-                    selection['selecting'] = False
-                    selection['complete'] = True
+            # Update UI
+            self.populate_spell_list()
             
-            cv2.setMouseCallback(window_name, mouse_callback)
-            
-            # Display the screenshot and allow selection
-            clone = screenshot.copy()
-            while True:
-                img = clone.copy()
-                if selection['x'] >= 0 and (selection['selecting'] or selection['complete']):
-                    x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
-                    # Ensure positive width and height
-                    if w < 0:
-                        x += w
-                        w = -w
-                    if h < 0:
-                        y += h
-                        h = -h
-                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                
-                cv2.imshow(window_name, img)
-                key = cv2.waitKey(1)
-                
-                # Enter key accepts the selection
-                if key == 13 and selection['complete'] and selection['w'] > 0 and selection['h'] > 0:
-                    break
-                # Escape key cancels
-                elif key == 27:
-                    selection['complete'] = False
-                    break
-            
-            # Clean up
-            cv2.destroyAllWindows()
-            
-            # Process selection if completed
-            if selection['complete']:
-                x, y, w, h = selection['x'], selection['y'], selection['w'], selection['h']
-                
-                # Ensure positive width and height
-                if w < 0:
-                    x += w
-                    w = -w
-                if h < 0:
-                    y += h
-                    h = -h
-                
-                # Extract the selected region as a template
-                if x >= 0 and y >= 0 and w > 0 and h > 0:
-                    template = screenshot[y:y+h, x:x+w].copy()
-                    
-                    # Resize template to standard size
-                    template = cv2.resize(template, (64, 64))
-                    
-                    # Update the template
-                    class_config = self.get_current_class_config()
-                    if 'icon_templates' not in class_config:
-                        class_config['icon_templates'] = {}
-                        
-                    class_config['icon_templates'][spell_name] = template
-                    
-                    # Save back to config
-                    self.save_current_class_config(class_config)
-                    
-                    # Update UI
-                    self.populate_spell_list()
-                    
-                    # Notify user
-                    QMessageBox.information(
-                        self,
-                        "Success", 
-                        f"Updated template for spell '{spell_name}'"
-                    )
-                else:
-                    QMessageBox.warning(
-                        self,
-                        "Invalid Selection", 
-                        "The selected area is invalid. Please try again."
-                    )
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Cancelled", 
-                    "Template capture was cancelled."
-                )
-        
-        finally:
-            # Show dialog again
-            self.show()
-            self.activateWindow()
+            # Notify user
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.information(
+                self,
+                "Success", 
+                f"Updated template for spell '{spell_name}'"
+            )
+    
+    self.capture_spell_icon(spell_name, capture_callback)
     
     def on_spell_name_changed(self):
         """Handle spell name changes"""
@@ -765,169 +650,22 @@ class EnhancedConfigurationDialog(QDialog):
             root.destroy()
             return
         
+        # Destroy the tkinter root to avoid conflicts
+        root.destroy()
+        
         # Ask if the user wants to capture a template from the screen
-        use_screen_capture = messagebox.askyesno(
+        from PyQt5.QtWidgets import QMessageBox
+        use_screen_capture = QMessageBox.question(
+            self,
             "Template Method",
             "Do you want to capture the spell icon from your screen?\n\n"
             "Yes: Capture from screen\n"
-            "No: Create a colored square template"
-        )
+            "No: Create a colored square template",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes
+        ) == QMessageBox.Yes
         
-        if use_screen_capture:
-            # Temporarily destroy the tkinter root to avoid conflicts with OpenCV
-            root.destroy()
-            
-            # Minimize dialog 
-            self.hide()
-            
-            # Now capture from screen
-            from screen_capture import ScreenCapture
-            
-            screen_capture = ScreenCapture()
-            
-            # Create window for capture
-            cv2.namedWindow("Capture Spell Icon")
-            
-            # Initialize capture variables
-            template = None
-            capturing = True
-            
-            def mouse_callback(event, x, y, flags, param):
-                nonlocal template
-                if capturing:
-                    # Get screen capture
-                    full_img = screen_capture.capture_full_screen()
-                    if full_img is None:
-                        return
-                        
-                    # Show a rectangle around the current position
-                    img_copy = full_img.copy()
-                    icon_size = 64  # Standard size for spell icons
-                    
-                    # Draw rectangle around the cursor position
-                    start_point = (max(0, x - icon_size//2), max(0, y - icon_size//2))
-                    end_point = (min(full_img.shape[1], x + icon_size//2), min(full_img.shape[0], y + icon_size//2))
-                    cv2.rectangle(img_copy, start_point, end_point, (0, 255, 0), 2)
-                    
-                    # Add text instruction
-                    cv2.putText(
-                        img_copy,
-                        "Position over spell icon and press Enter",
-                        (50, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (0, 255, 0),
-                        2
-                    )
-                    
-                    # Show the image
-                    cv2.imshow("Capture Spell Icon", img_copy)
-                    
-                    # If left button was clicked, save template
-                    if event == cv2.EVENT_LBUTTONDOWN:
-                        # Extract the region around the mouse as a template
-                        x1, y1 = max(0, x - icon_size//2), max(0, y - icon_size//2)
-                        x2, y2 = min(full_img.shape[1], x + icon_size//2), min(full_img.shape[0], y + icon_size//2)
-                        
-                        if x2 > x1 and y2 > y1:
-                            template = full_img[y1:y2, x1:x2].copy()
-                            
-                            # Display the captured template
-                            cv2.imshow("Captured Template", template)
-            
-            # Set up mouse callback
-            cv2.setMouseCallback("Capture Spell Icon", mouse_callback)
-            
-            # Main capture loop
-            while capturing:
-                # Just wait for key press
-                key_pressed = cv2.waitKey(100)
-                
-                # Enter key accepts the selection
-                if key_pressed == 13 and template is not None:  # Enter key
-                    capturing = False
-                # Escape key cancels
-                elif key_pressed == 27:  # Escape key
-                    template = None
-                    capturing = False
-            
-            # Clean up OpenCV windows
-            cv2.destroyAllWindows()
-            
-            # Show dialog again
-            self.show()
-            
-            # If no template was captured, create a default one
-            if template is None:
-                # Create a new tkinter root for messagebox
-                root = tk.Tk()
-                root.withdraw()
-                messagebox.showinfo(
-                    "Screen Capture Cancelled",
-                    "Creating a default template instead."
-                )
-                # Fall through to default template creation
-            else:
-                # Resize template to standard size if needed
-                if template.shape[0] != 64 or template.shape[1] != 64:
-                    template = cv2.resize(template, (64, 64))
-                    
-                # Update current class config
-                class_config = self.get_current_class_config()
-                
-                # Initialize icon_templates if needed
-                if 'icon_templates' not in class_config:
-                    class_config['icon_templates'] = {}
-                
-                # Initialize keybinds if needed  
-                if 'keybinds' not in class_config:
-                    class_config['keybinds'] = {}
-                
-                # Store the template and keybind
-                class_config['icon_templates'][spell_name] = template
-                class_config['keybinds'][spell_name] = key
-                
-                # Save back to config
-                self.save_current_class_config(class_config)
-                
-                # Update UI
-                self.populate_spell_list()
-                self.populate_keybind_list()
-                
-                # Notify user
-                root = tk.Tk()
-                root.withdraw()
-                messagebox.showinfo("Success", f"Added spell '{spell_name}' with key '{key}'")
-                root.destroy()
-                return
-        
-        # Default template creation (original code)
-        # Create a simple template for this spell (64x64 colored square with text)
-        import random
-        template = np.zeros((64, 64, 3), dtype=np.uint8)
-        
-        # Generate a random color for this spell
-        color = (
-            random.randint(100, 255),
-            random.randint(100, 255),
-            random.randint(100, 255)
-        )
-        
-        # Fill with the color
-        template[:, :] = color
-        
-        # Add text with the spell name
-        cv2.putText(
-            template,
-            spell_name[:5],  # First 5 chars only to fit
-            (10, 40),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.7,
-            (0, 0, 0),  # Black text
-            2
-        )
-        
-        # Update current class config
+        # Get current class config
         class_config = self.get_current_class_config()
         
         # Initialize icon_templates if needed
@@ -938,23 +676,74 @@ class EnhancedConfigurationDialog(QDialog):
         if 'keybinds' not in class_config:
             class_config['keybinds'] = {}
         
-        # Store the template and keybind
-        class_config['icon_templates'][spell_name] = template
+        # Store the keybind regardless of template method
         class_config['keybinds'][spell_name] = key
         
-        # Save back to config
-        self.save_current_class_config(class_config)
-        
-        # Update UI
-        self.populate_spell_list()
-        self.populate_keybind_list()
-        
-        # Notify user
-        if 'root' not in locals() or root is None or not root.winfo_exists():
-            root = tk.Tk()
-            root.withdraw()
-        messagebox.showinfo("Success", f"Added spell '{spell_name}' with key '{key}'")
-        root.destroy()
+        if use_screen_capture:
+            # Use the shared capture method
+            def capture_callback(template):
+                # Store the template
+                class_config['icon_templates'][spell_name] = template
+                
+                # Save back to config
+                self.save_current_class_config(class_config)
+                
+                # Update UI
+                self.populate_spell_list()
+                self.populate_keybind_list()
+                
+                # Notify user
+                QMessageBox.information(
+                    self,
+                    "Success",
+                    f"Added spell '{spell_name}' with key '{key}'"
+                )
+            
+            self.capture_spell_icon(spell_name, capture_callback)
+        else:
+            # Default template creation (original code)
+            # Create a simple template for this spell (64x64 colored square with text)
+            import random
+            template = np.zeros((64, 64, 3), dtype=np.uint8)
+            
+            # Generate a random color for this spell
+            color = (
+                random.randint(100, 255),
+                random.randint(100, 255),
+                random.randint(100, 255)
+            )
+            
+            # Fill with the color
+            template[:, :] = color
+            
+            # Add text with the spell name
+            cv2.putText(
+                template,
+                spell_name[:5],  # First 5 chars only to fit
+                (10, 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                (0, 0, 0),  # Black text
+                2
+            )
+            
+            # Store the template
+            class_config['icon_templates'][spell_name] = template
+            
+            # Save back to config
+            self.save_current_class_config(class_config)
+            
+            # Update UI
+            self.populate_spell_list()
+            self.populate_keybind_list()
+            
+            # Notify user
+            QMessageBox.information(
+                self,
+                "Success",
+                f"Added spell '{spell_name}' with key '{key}'"
+            )
+
         
     def remove_spell(self):
         """Remove the selected spell"""
@@ -1014,34 +803,253 @@ class EnhancedConfigurationDialog(QDialog):
         # Show this dialog again
         self.show()
         
+    
+    # Add this method to EnhancedConfigurationDialog class
+    def capture_spell_icon(self, spell_name=None, callback=None):
+        """
+        Capture a spell icon from the screen
+        
+        Args:
+            spell_name: Optional name of the spell
+            callback: Function to call with the captured template
+        """
+        import time
+        
+        # Minimize dialog 
+        self.hide()
+        
+        # Show instructions
+        from PyQt5.QtWidgets import QMessageBox
+        msg = QMessageBox()
+        msg.setWindowTitle("Capture Spell Icon")
+        msg.setText("A screen capture window will open.\n\n"
+                    "Position over the spell icon and press Enter.\n"
+                    "Press Escape to cancel.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+        
+        # Small delay to allow the dialog to close
+        time.sleep(0.5)
+        
+        from screen_capture import ScreenCapture
+        import cv2
+        import numpy as np
+        
+        screen_capture = ScreenCapture()
+        
+        # Flag to ensure we only have one capture window open
+        is_capturing = True
+        template = None
+        
+        try:
+            # Create window for capture
+            cv2.namedWindow("Capture Spell Icon")
+            
+            def mouse_callback(event, x, y, flags, param):
+                nonlocal template
+                if is_capturing:
+                    # Get screen capture
+                    full_img = screen_capture.capture_full_screen()
+                    if full_img is None:
+                        return
+                        
+                    # Show a rectangle around the mouse position
+                    img_copy = full_img.copy()
+                    icon_size = 64  # Standard size for spell icons
+                    
+                    # Draw rectangle around the cursor position
+                    start_point = (max(0, x - icon_size//2), max(0, y - icon_size//2))
+                    end_point = (min(full_img.shape[1], x + icon_size//2), min(full_img.shape[0], y + icon_size//2))
+                    cv2.rectangle(img_copy, start_point, end_point, (0, 255, 0), 2)
+                    
+                    # Add text instruction
+                    cv2.putText(
+                        img_copy,
+                        "Position over spell icon and press Enter",
+                        (50, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (0, 255, 0),
+                        2
+                    )
+                    
+                    # Show the image
+                    cv2.imshow("Capture Spell Icon", img_copy)
+                    
+                    # If left button was clicked, extract the icon
+                    if event == cv2.EVENT_LBUTTONDOWN:
+                        # Extract the region around the mouse as a template
+                        x1, y1 = max(0, x - icon_size//2), max(0, y - icon_size//2)
+                        x2, y2 = min(full_img.shape[1], x + icon_size//2), min(full_img.shape[0], y + icon_size//2)
+                        
+                        if x2 > x1 and y2 > y1:
+                            template = full_img[y1:y2, x1:x2].copy()
+                            
+                            # Display the captured template
+                            if template is not None:
+                                try:
+                                    cv2.imshow("Captured Template", template)
+                                except:
+                                    pass
+            
+            # Set up mouse callback
+            cv2.setMouseCallback("Capture Spell Icon", mouse_callback)
+            
+            # Main capture loop - capture first frame
+            full_img = screen_capture.capture_full_screen()
+            if full_img is not None:
+                cv2.imshow("Capture Spell Icon", full_img)
+            
+            # While capturing, monitor key presses
+            while is_capturing:
+                # Get current frame
+                full_img = screen_capture.capture_full_screen()
+                if full_img is None:
+                    continue
+                    
+                # If template is not selected, update the display
+                if template is None:
+                    key = cv2.waitKey(100)  # Wait for key press with smaller timeout
+                    
+                    # Enter key accepts the selection if template is available
+                    if key == 13 and template is not None:  # Enter key
+                        is_capturing = False
+                    # Escape key cancels
+                    elif key == 27:  # Escape key
+                        template = None
+                        is_capturing = False
+                else:
+                    # Template is selected, wait for Enter to confirm or Escape to cancel
+                    key = cv2.waitKey(100)
+                    
+                    # Enter key accepts the selection
+                    if key == 13:  # Enter key
+                        is_capturing = False
+                    # Escape key cancels
+                    elif key == 27:  # Escape key
+                        template = None
+                        is_capturing = False
+            
+            # Clean up OpenCV windows
+            cv2.destroyAllWindows()
+            
+            # Show dialog again
+            self.show()
+            self.activateWindow()
+            
+            # If no template was captured, return
+            if template is None:
+                QMessageBox.warning(
+                    self,
+                    "Capture Cancelled",
+                    "The spell icon capture was cancelled."
+                )
+                return False
+                
+            # Resize template to standard size if needed
+            if template.shape[0] != 64 or template.shape[1] != 64:
+                template = cv2.resize(template, (64, 64))
+                
+            # Call the callback with the template
+            if callback:
+                callback(template)
+                return True
+                
+            # If no callback, process the template ourselves
+            
+            # Get current class config
+            class_config = self.get_current_class_config()
+            
+            # Initialize icon_templates if needed
+            if 'icon_templates' not in class_config:
+                class_config['icon_templates'] = {}
+            
+            # Store the template
+            if spell_name:
+                class_config['icon_templates'][spell_name] = template
+                
+                # Save back to config
+                self.save_current_class_config(class_config)
+                
+                # Update UI
+                self.populate_spell_list()
+                
+                # Notify user
+                QMessageBox.information(
+                    self,
+                    "Success",
+                    f"Template for '{spell_name}' has been captured."
+                )
+                return True
+            
+            return template
+            
+        except Exception as e:
+            import logging
+            logger = logging.getLogger('ui.enhanced_config_dialog')
+            logger.error(f"Error capturing spell icon: {str(e)}", exc_info=True)
+            
+            # Clean up
+            cv2.destroyAllWindows()
+            
+            # Show dialog again
+            self.show()
+            self.activateWindow()
+            
+            # Notify user
+            QMessageBox.warning(
+                self,
+                "Capture Error",
+                f"Failed to capture spell icon: {str(e)}"
+            )
+            return False
+        
+        finally:
+            # Ensure we clean up
+            cv2.destroyAllWindows()
+            
+            # Make sure the dialog is shown again
+            self.show()
+            self.activateWindow()
+
+
     def get_current_class_config(self):
         """Get the configuration for the current expansion and class"""
-        # Get selected expansion and class
-        current_exp_id, current_class_id = self.exp_class_manager.get_current_selection()
-        
-        if not current_exp_id or not current_class_id:
-            # No selection, return empty config
-            return {}
+        try:
+            # Get selected expansion and class
+            current_exp_id, current_class_id = self.exp_class_manager.get_current_selection()
             
-        # Get config for this expansion and class
-        expansions = self.config.get('expansions', {})
-        
-        if current_exp_id not in expansions:
-            return {}
+            if not current_exp_id or not current_class_id:
+                # No selection, return empty config
+                return {}
+                
+            # Get config for this expansion and class
+            expansions = self.config.get('expansions', {})
             
-        exp_data = expansions[current_exp_id]
-        classes = exp_data.get('classes', {})
-        
-        if current_class_id not in classes:
-            return {}
+            if current_exp_id not in expansions:
+                return {}
+                
+            exp_data = expansions[current_exp_id]
+            classes = exp_data.get('classes', {})
             
-        class_config = classes[current_class_id]
-        if not isinstance(class_config, dict):
-            # Initialize with empty dict if not a dict
-            classes[current_class_id] = {}
+            if current_class_id not in classes:
+                return {}
+                
             class_config = classes[current_class_id]
+            if not isinstance(class_config, dict):
+                # Initialize with empty dict if not a dict
+                classes[current_class_id] = {}
+                class_config = classes[current_class_id]
+                
+            return class_config
+        except Exception as e:
+            # Handle any errors gracefully
+            import logging
+            logger = logging.getLogger('ui.enhanced_config_dialog')
+            logger.error(f"Error getting current class config: {str(e)}", exc_info=True)
             
-        return class_config
+            # Return empty config on error
+            return {}
         
     def save_current_class_config(self, class_config):
         """Save the current class configuration"""
@@ -1101,6 +1109,60 @@ class EnhancedConfigurationDialog(QDialog):
                 "Save Error",
                 "Failed to save configuration."
             )
+
+    def update_ui_for_selected_class(self):
+        """Update the UI elements based on the currently selected class"""
+        # Get current selection - handle safely
+        try:
+            current_exp_id, current_class_id = self.exp_class_manager.get_current_selection()
+            
+            # Check if we have a valid selection
+            if not current_exp_id or not current_class_id:
+                # No valid selection, clear the spell list
+                self.spell_list.clear()
+                return
+                
+            # Continue with normal processing...
+            # Check if there are spell templates for this class
+            class_config = self.get_current_class_config()
+            
+            has_templates = False
+            if 'icon_templates' in class_config and class_config['icon_templates']:
+                has_templates = True
+                
+            # Update the spell list
+            self.populate_spell_list()
+            self.populate_keybind_list()
+            
+            # If no templates, show a message in the spell list
+            if not has_templates:
+                self.spell_list.clear()
+                
+                # Add a helper item
+                from PyQt5.QtWidgets import QListWidgetItem
+                from PyQt5.QtCore import Qt
+                
+                item = QListWidgetItem("No spell templates configured for this class")
+                item.setFlags(Qt.NoItemFlags)  # Make it non-selectable
+                item.setTextAlignment(Qt.AlignCenter)
+                self.spell_list.addItem(item)
+                
+                # Focus on the Add button to make it obvious
+                self.add_spell_button.setFocus()
+                
+                # Add visual emphasis to the Add button
+                self.add_spell_button.setStyleSheet("QPushButton { background-color: #d0e8ff; font-weight: bold; }")
+            else:
+                # Reset the Add button style
+                self.add_spell_button.setStyleSheet("")
+        except Exception as e:
+            # Handle any errors gracefully
+            import logging
+            logger = logging.getLogger('ui.enhanced_config_dialog')
+            logger.error(f"Error updating UI for selected class: {str(e)}", exc_info=True)
+            
+            # Clear the spell list to avoid visual inconsistencies
+            self.spell_list.clear()
             
     def on_config_changed(self):
         """Handle configuration changes from the expansion/class manager"""
@@ -1108,7 +1170,24 @@ class EnhancedConfigurationDialog(QDialog):
         self.config = self.config_manager.load_config()
         
         # Update UI
-        self.populate_spell_list()
-        self.populate_keybind_list()
+        self.update_ui_for_selected_class()
         self.load_settings_values()
+
+    # Also, at the end of EnhancedConfigurationDialog.__init__, add a call to update the UI
+    def __init__(self, config_manager, parent=None):
+        # First call the parent class __init__
+        super().__init__(parent)
+        
+        self.config_manager = config_manager
+        self.config = config_manager.load_config()
+        
+        self.setWindowTitle("Spell Caster Configuration")
+        self.setMinimumSize(900, 600)
+        
+        # Set up the UI
+        self.setup_ui()
+        
+        # Now that everything is set up, update the UI for the current class
+        # (We move this to the end to ensure all components are initialized)
+        self.update_ui_for_selected_class()
                 

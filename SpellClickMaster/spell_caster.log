@@ -3422,3 +3422,114 @@ AttributeError: module 'ctypes.wintypes' has no attribute 'BITMAPINFO'
 2025-04-23 14:14:39,766 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
 2025-04-23 14:15:21,997 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
 2025-04-23 14:15:21,997 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:23:52,639 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:23:52,651 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:23:52,652 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:23:52,653 - spell_detector - INFO - Configuration updated
+2025-04-23 14:23:52,655 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:23:52,655 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:23:52,656 - spell_detector - INFO - Configuration updated
+2025-04-23 14:23:52,658 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:23:52,658 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:23:52,659 - spell_detector - INFO - Configuration updated
+2025-04-23 14:23:52,661 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:23:52,661 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:23:52,663 - spell_detector - INFO - Configuration updated
+2025-04-23 14:30:08,380 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:30:08,390 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:30:08,391 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:30:08,392 - spell_detector - INFO - Configuration updated
+2025-04-23 14:30:08,393 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:30:08,393 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:30:08,394 - spell_detector - INFO - Configuration updated
+2025-04-23 14:30:08,395 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:30:08,396 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:30:08,397 - spell_detector - INFO - Configuration updated
+2025-04-23 14:30:08,398 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:30:08,399 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:30:08,401 - spell_detector - INFO - Configuration updated
+2025-04-23 14:32:15,951 - utils.config_manager - INFO - Templates loaded from F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:32:15,963 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:32:15,963 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:32:15,968 - spell_detector - INFO - Configuration updated
+2025-04-23 14:32:15,969 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:32:15,970 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:32:15,970 - spell_detector - INFO - Configuration updated
+2025-04-23 14:32:15,972 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:32:15,972 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:32:15,973 - spell_detector - INFO - Configuration updated
+2025-04-23 14:32:15,974 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:32:15,975 - utils.config_manager - INFO - Configuration saved to F:\SpellClickMaster\spell_caster_config.json
+2025-04-23 14:32:15,976 - spell_detector - INFO - Configuration updated
+2025-04-23 14:33:14,680 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:33:14,681 - utils.config_manager - ERROR - Error saving configuration: Object of type ndarray is not JSON serializable
+Traceback (most recent call last):
+  File "F:\SpellClickMaster\utils\config_manager.py", line 115, in save_config
+    json.dump(filtered_config, f, indent=2)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\__init__.py", line 179, in dump
+    for chunk in iterable:
+                 ^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  [Previous line repeated 3 more times]
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type ndarray is not JSON serializable
+2025-04-23 14:33:40,909 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:33:40,910 - utils.config_manager - ERROR - Error saving configuration: Object of type ndarray is not JSON serializable
+Traceback (most recent call last):
+  File "F:\SpellClickMaster\utils\config_manager.py", line 115, in save_config
+    json.dump(filtered_config, f, indent=2)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\__init__.py", line 179, in dump
+    for chunk in iterable:
+                 ^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  [Previous line repeated 3 more times]
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type ndarray is not JSON serializable
+2025-04-23 14:35:54,167 - utils.config_manager - INFO - Templates saved to F:\SpellClickMaster\icon_templates.dat
+2025-04-23 14:35:54,168 - utils.config_manager - ERROR - Error saving configuration: Object of type ndarray is not JSON serializable
+Traceback (most recent call last):
+  File "F:\SpellClickMaster\utils\config_manager.py", line 115, in save_config
+    json.dump(filtered_config, f, indent=2)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\__init__.py", line 179, in dump
+    for chunk in iterable:
+                 ^^^^^^^^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  [Previous line repeated 3 more times]
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type ndarray is not JSON serializable

@@ -71,7 +71,7 @@
             "Earth Shock": "3",
             "Flame Shock": "4",
             "Lava Burst": "5",
-            "Frost Shock": "6",
+            "Frost Shock": "2",
             "Healing Surge": "7",
             "Chain Heal": "8",
             "Healing Rain": "9",
@@ -91,20 +91,9 @@
             "Primordial Wave": "alt+2",
             "Elemental Blast": "alt+3",
             "Icefury": "alt+4",
-            "Liquid Magma Totem": "alt+5"
+            "Liquid Magma Totem": "alt+5",
+            "Primal Strike": "1"
           },
-          "name": "shaman"
-        }
-      }
-    }
-  },
-  "current_expansion": "11.1.5",
-  "current_class": "shaman",
-  "scan_area": [
-    712,
-    966,
-    73,
-    75
-  ],
-  "keybinds": {}
-}
+          "name": "shaman",
+          "icon_templates": {
+            "Primal Strike": 
